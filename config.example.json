@@ -1,0 +1,4 @@
+{
+  "deepseek_api_key": "your_deepseek_api_key_here",
+  "jwt_secret": "generate-a-random-secret-here-at-least-32-chars"
+}

@@ -1,0 +1,844 @@
+/* ============================================================
+   RippleRead Library — Premium Morandi Color System
+   Minimalist, Notion/Medium-inspired design language
+   ============================================================ */
+
+/* ── Morandi Palette ─────────────────────────────── */
+:root {
+    --lib-parchment:    #F4F1EA;
+    --lib-forest:       #2D403E;
+    --lib-slate:        #4A5568;
+    --lib-warm-brown:   #5C4B3E;
+    --lib-blue-gray:    #3D4A5C;
+    --lib-taupe:        #6B5B4F;
+    --lib-dusty-rose:   #8B7B7B;
+    --lib-moss:         #4A5D4E;
+    --lib-charcoal:     #3A3F47;
+    --lib-cream:        #F7F4ED;
+    --lib-eggshell:     #EDE8DB;
+}
+
+/* ── Page Layout ─────────────────────────────────── */
+.library-main {
+    margin-left: 256px;
+    flex: 1;
+    max-width: 1400px;
+    padding: 56px 48px 80px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* ── Header ──────────────────────────────────────── */
+.library-header {
+    margin-bottom: 40px;
+}
+
+.library-header__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.library-header__title {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #1E293B;
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+/* ── Import Button ───────────────────────────────── */
+.library-import-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #0D9488;
+    background: rgba(13, 148, 136, 0.06);
+    border: 1px solid rgba(13, 148, 136, 0.12);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+    white-space: nowrap;
+}
+
+.library-import-btn:hover {
+    background: rgba(13, 148, 136, 0.1);
+    border-color: rgba(13, 148, 136, 0.2);
+}
+
+.library-import-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.library-import-status {
+    display: none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: #94A3B8;
+    margin-left: 12px;
+}
+
+/* ── Search Bar ──────────────────────────────────── */
+.library-search-wrap {
+    position: relative;
+    margin-bottom: 0;
+}
+
+.library-search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #B0ADA5;
+    pointer-events: none;
+}
+
+.library-search-input {
+    width: 100%;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    padding: 13px 16px 13px 44px;
+    border: none;
+    border-radius: 12px;
+    background: #fff;
+    color: #1E293B;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0, 0, 0, 0.03);
+    transition: box-shadow 0.25s ease;
+    box-sizing: border-box;
+    line-height: 1.5;
+}
+
+.library-search-input::placeholder {
+    color: #B0ADA5;
+}
+
+.library-search-input:focus {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 0 2px rgba(13, 148, 136, 0.15);
+}
+
+/* ── Tab Bar ─────────────────────────────────────── */
+.library-tabs {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+}
+
+.library-tab {
+    position: relative;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #94A3B8;
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: color 0.25s ease;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+}
+
+.library-tab:hover {
+    color: #64748B;
+}
+
+.library-tab.s--active {
+    color: #0D9488;
+}
+
+.library-tab.s--active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 20px;
+    right: 20px;
+    height: 2px;
+    background: #0D9488;
+    border-radius: 1px 1px 0 0;
+}
+
+/* ── Grid Layout ─────────────────────────────────── */
+.library-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 32px;
+    padding-top: 32px;
+}
+
+/* ── Book Card ───────────────────────────────────── */
+.library-card {
+    position: relative;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1),
+                box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.library-card:hover {
+    transform: translateY(-6px);
+}
+
+.library-card:hover .library-card__shadow {
+    box-shadow:
+        0 16px 40px -12px rgba(0, 0, 0, 0.18),
+        0 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* ── Cover Wrapper (2:3 ratio) ───────────────────── */
+.library-card__cover {
+    position: relative;
+    aspect-ratio: 2 / 3;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.04),
+        0 1px 3px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.library-card__cover--image {
+    background: #E8E5DF !important;
+}
+
+.library-card__cover-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    border-radius: 4px;
+}
+
+.library-card__cover--image .library-card__cover-inner {
+    z-index: 1;
+    background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.1) 40%, transparent 100%);
+}
+
+.library-card__cover--image .library-card__title,
+.library-card__cover--image .library-card__author {
+    color: #FFFFFF;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+.library-card:hover .library-card__cover {
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ── Cover Spine Shadow (book thickness) ─────────── */
+.library-card__cover::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.03),
+        transparent
+    );
+    z-index: 2;
+    pointer-events: none;
+    border-radius: 4px 0 0 4px;
+}
+
+.library-card__cover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 3px;
+    height: 100%;
+    background: linear-gradient(
+        to left,
+        rgba(0, 0, 0, 0.02),
+        transparent
+    );
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* ── Cover Content ───────────────────────────────── */
+.library-card__cover-inner {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 14px;
+    box-sizing: border-box;
+}
+
+.library-card__title {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.35;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    word-break: break-word;
+    letter-spacing: -0.01em;
+}
+
+.library-card__author {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    margin-top: 8px;
+    opacity: 0.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-align: center;
+    letter-spacing: 0.02em;
+}
+
+.library-card__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(4px);
+}
+
+/* ── Cover Color Variants (Morandi Palette) ──────── */
+.cover--parchment { background: var(--lib-parchment); }
+.cover--parchment .library-card__title,
+.cover--parchment .library-card__author { color: #4A4036; }
+
+.cover--forest { background: var(--lib-forest); }
+.cover--forest .library-card__title,
+.cover--forest .library-card__author { color: #E8E4D9; }
+
+.cover--slate { background: var(--lib-slate); }
+.cover--slate .library-card__title,
+.cover--slate .library-card__author { color: #E2E4E7; }
+
+.cover--warm-brown { background: var(--lib-warm-brown); }
+.cover--warm-brown .library-card__title,
+.cover--warm-brown .library-card__author { color: #EDE6DB; }
+
+.cover--blue-gray { background: var(--lib-blue-gray); }
+.cover--blue-gray .library-card__title,
+.cover--blue-gray .library-card__author { color: #DEE2E8; }
+
+.cover--taupe { background: var(--lib-taupe); }
+.cover--taupe .library-card__title,
+.cover--taupe .library-card__author { color: #F0EBE2; }
+
+.cover--dusty-rose { background: var(--lib-dusty-rose); }
+.cover--dusty-rose .library-card__title,
+.cover--dusty-rose .library-card__author { color: #F4EFEA; }
+
+.cover--moss { background: var(--lib-moss); }
+.cover--moss .library-card__title,
+.cover--moss .library-card__author { color: #E2E6DB; }
+
+.cover--charcoal { background: var(--lib-charcoal); }
+.cover--charcoal .library-card__title,
+.cover--charcoal .library-card__author { color: #E0E0E0; }
+
+.cover--cream { background: var(--lib-cream); }
+.cover--cream .library-card__title,
+.cover--cream .library-card__author { color: #4A4340; }
+
+/* ── Card Info (below cover) ─────────────────────── */
+.library-card__info {
+    padding: 10px 2px 4px;
+}
+
+.library-card__info-title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #1E293B;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 2px;
+    letter-spacing: 0.01em;
+}
+
+.library-card__info-meta {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    color: #94A3B8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+}
+
+/* ── Progress Bar ────────────────────────────────── */
+.library-card__progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.library-card__progress-bar {
+    flex: 1;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.library-card__progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: #0D9488;
+    transition: width 0.5s ease;
+}
+
+.library-card__progress-text {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    color: #94A3B8;
+    flex-shrink: 0;
+}
+
+/* ── Delete Button ───────────────────────────────── */
+.library-card__delete {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: #94A3B8;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.library-card:hover .library-card__delete {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.library-card__delete:hover {
+    background: rgba(254, 242, 242, 0.95);
+    color: #EF4444;
+    border-color: rgba(239, 68, 68, 0.15);
+}
+
+.library-card__delete svg {
+    width: 13px;
+    height: 13px;
+}
+
+/* ── Favorite Button ───────────────────────────────── */
+.library-card__fav {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: #94A3B8;
+    cursor: pointer;
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.library-card:hover .library-card__fav {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.library-card__fav:hover {
+    background: rgba(254, 226, 226, 0.95);
+    color: #EF4444;
+    border-color: rgba(239, 68, 68, 0.15);
+}
+
+.library-card__fav.is-faved {
+    opacity: 1;
+    color: #EF4444;
+}
+
+.library-card__fav svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* ── Card Shadow Layer ───────────────────────────── */
+.library-card__shadow {
+    border-radius: 4px;
+    transition: box-shadow 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.04),
+        0 4px 12px -6px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Empty State ─────────────────────────────────── */
+.library-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.library-empty__title {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    color: #94A3B8;
+    margin: 16px 0 6px;
+}
+
+.library-empty__desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    color: #B0ADA5;
+    margin: 0;
+    max-width: 340px;
+}
+
+/* ── Add Content Section ─────────────────────────── */
+.lib-add-section {
+    margin-bottom: 34px;
+}
+
+.lib-add-section__title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin: 0 0 14px;
+}
+
+.lib-add-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.lib-add-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.lib-add-card:hover {
+    border-color: #CBD5E1;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.lib-add-card__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.lib-add-card__icon--upload { background: #EEF2FF; color: #6366F1; }
+.lib-add-card__icon--url    { background: #F0FDFA; color: #14B8A6; }
+.lib-add-card__icon--guten  { background: #FFF7ED; color: #F97316; }
+
+.lib-add-card__body {
+    flex: 1;
+    min-width: 0;
+}
+
+.lib-add-card__title {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #1E293B;
+    margin: 0 0 2px;
+}
+
+.lib-add-card__desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.7rem;
+    color: #94A3B8;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.lib-add-card__action {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    background: #1E293B;
+    color: #fff;
+    white-space: nowrap;
+    flex-shrink: 0;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.2s;
+}
+
+.lib-add-card__action:hover { background: #334155; }
+.lib-add-card__action:disabled { background: #CBD5E1; cursor: not-allowed; }
+
+.lib-add-card__action--sm {
+    padding: 6px 14px;
+    font-size: 0.7rem;
+}
+
+.lib-add-card__action--link {
+    background: #F8FAFC;
+    color: #1E293B;
+    border: 1px solid #E2E8F0;
+}
+
+.lib-add-card__action--link:hover {
+    background: #F1F5F9;
+    border-color: #CBD5E1;
+}
+
+.lib-add-card__url-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.lib-add-card__url-input {
+    width: 140px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.72rem;
+    color: #1E293B;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: 8px;
+    padding: 6px 10px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.lib-add-card__url-input:focus {
+    border-color: #14B8A6;
+}
+
+.lib-add-card__url-input::placeholder {
+    color: #CBD5E1;
+}
+
+/* ── Section head ────────────────────────────────── */
+.lib-section-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.lib-section-head__title {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1E293B;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+/* ── Import Button (legacy) ──────────────────────── */
+.library-import-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #0D9488;
+    background: rgba(13, 148, 136, 0.06);
+    border: 1px solid rgba(13, 148, 136, 0.12);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.25, 0.1, 0.25, 1);
+    white-space: nowrap;
+}
+
+.library-import-btn:hover {
+    background: rgba(13, 148, 136, 0.1);
+    border-color: rgba(13, 148, 136, 0.2);
+}
+
+.library-import-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Toast ───────────────────────────────────────── */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 14px 22px;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    z-index: 9999;
+    transform: translateX(400px);
+    transition: transform 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.15);
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.success {
+    background: #0D9488;
+}
+
+.toast.error {
+    background: #E15554;
+}
+
+/* ── Spinner ─────────────────────────────────────── */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.spinner {
+    animation: spin 0.8s linear infinite;
+}
+
+/* ── Responsive ──────────────────────────────────── */
+@media (max-width: 768px) {
+    .library-main {
+        margin-left: 0;
+        padding: 32px 20px 60px;
+    }
+
+    .library-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 24px;
+    }
+
+    .library-header__title {
+        font-size: 1.5rem;
+    }
+
+    .library-tab {
+        padding: 10px 14px;
+        font-size: 0.75rem;
+    }
+}
+
+/* ============================================================
+   Dark Mode — Library
+   ============================================================ */
+html.dark .library-main {
+    background: #1a1a2e;
+}
+
+html.dark .library-header__title {
+    color: #e2e8f0;
+}
+
+html.dark .library-header__subtitle {
+    color: #94a3b8;
+}
+
+html.dark .library-tab {
+    color: #94a3b8;
+}
+
+html.dark .library-tab:hover {
+    background: rgba(45, 212, 191, 0.08);
+    color: #e2e8f0;
+}
+
+html.dark .library-tab.library-tab--active {
+    background: rgba(45, 212, 191, 0.12);
+    color: #2dd4bf;
+}
+
+html.dark .book-card {
+    background: #2a2a3e;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+html.dark .book-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3), 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+html.dark .book-card__title {
+    color: #e2e8f0;
+}
+
+html.dark .book-card__author {
+    color: #94a3b8;
+}
+
+html.dark .book-card__meta {
+    color: #64748b;
+}
+
+html.dark .library-empty {
+    color: #64748b;
+}

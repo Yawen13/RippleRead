@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Notifications — RippleRead</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="home.css">
+    <style>
+        .admin-page {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+        .admin-page h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--rr-ink);
+            margin-bottom: 8px;
+        }
+        .admin-page .subtitle {
+            color: #64748B;
+            font-size: 0.88rem;
+            margin-bottom: 32px;
+        }
+        .admin-form {
+            background: #FFF;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 24px rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(15, 23, 42, 0.06);
+        }
+        .admin-form label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--rr-ink);
+            margin-bottom: 6px;
+            margin-top: 18px;
+        }
+        .admin-form label:first-child {
+            margin-top: 0;
+        }
+        .admin-form input, .admin-form select, .admin-form textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-family: inherit;
+            color: var(--rr-ink);
+            background: #F8FAFC;
+            transition: border-color 0.15s, box-shadow 0.15s;
+            box-sizing: border-box;
+        }
+        .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus {
+            outline: none;
+            border-color: #14B8A6;
+            box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+        }
+        .admin-form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .admin-form .row {
+            display: flex;
+            gap: 16px;
+        }
+        .admin-form .row > * {
+            flex: 1;
+        }
+        .admin-form .type-select {
+            display: flex;
+            gap: 8px;
+        }
+        .admin-form .type-pill {
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            background: #F8FAFC;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: #64748B;
+        }
+        .admin-form .type-pill.active {
+            background: #14B8A6;
+            color: #FFF;
+            border-color: #14B8A6;
+        }
+        .admin-form .btn-submit {
+            width: 100%;
+            padding: 12px;
+            margin-top: 24px;
+            background: #14B8A6;
+            color: #FFF;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .admin-form .btn-submit:hover {
+            background: #0D9488;
+        }
+        .admin-form .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            z-index: 2000;
+            animation: toastIn 0.3s ease;
+        }
+        .toast--success { background: #ECFDF5; color: #065F46; }
+        .toast--error { background: #FEE2E2; color: #991B1B; }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(-12px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .lexile-hint {
+            font-size: 0.72rem;
+            color: #94A3B8;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div id="globalSidebar" data-page="admin"></div>
+
+    <main class="admin-page">
+        <h1>Platform Notifications</h1>
+        <p class="subtitle">Send announcements, tips, or campaign messages to readers.</p>
+
+        <div class="admin-form">
+            <label>Notification Type</label>
+            <div class="type-select" id="typeSelect">
+                <button class="type-pill active" data-type="platform">Announcement</button>
+                <button class="type-pill" data-type="system">System</button>
+                <button class="type-pill" data-type="content">Content</button>
+                <button class="type-pill" data-type="reading">Reading</button>
+                <button class="type-pill" data-type="vocab">Vocabulary</button>
+            </div>
+
+            <label for="notifTitle">Title *</label>
+            <input type="text" id="notifTitle" placeholder="e.g. May Reading Challenge is live!" maxlength="200">
+
+            <label for="notifBody">Body</label>
+            <textarea id="notifBody" placeholder="Additional details..." maxlength="500"></textarea>
+
+            <label for="notifLink">Link (optional)</label>
+            <input type="text" id="notifLink" placeholder="e.g. explore.html or statistics.html">
+
+            <label>Target Audience</label>
+            <div class="row">
+                <div>
+                    <label style="font-weight:400; font-size:0.78rem; color:#64748B;">Min Lexile</label>
+                    <input type="number" id="minLexile" placeholder="e.g. 400" min="200" max="1400">
+                    <div class="lexile-hint">Leave blank for all levels</div>
+                </div>
+                <div>
+                    <label style="font-weight:400; font-size:0.78rem; color:#64748B;">Max Lexile</label>
+                    <input type="number" id="maxLexile" placeholder="e.g. 900" min="200" max="1400">
+                </div>
+            </div>
+
+            <button class="btn-submit" id="submitBtn">Send Notification</button>
+        </div>
+    </main>
+
+    <script src="auth.js"></script>
+    <script src="sidebar.js"></script>
+    <script>
+        (function () {
+            var typePills = document.querySelectorAll('.type-pill');
+            var currentType = 'platform';
+
+            typePills.forEach(function (pill) {
+                pill.addEventListener('click', function () {
+                    typePills.forEach(function (p) { p.classList.remove('active'); });
+                    pill.classList.add('active');
+                    currentType = pill.getAttribute('data-type');
+                });
+            });
+
+            function showToast(msg, isError) {
+                var existing = document.querySelector('.toast');
+                if (existing) existing.remove();
+                var toast = document.createElement('div');
+                toast.className = 'toast ' + (isError ? 'toast--error' : 'toast--success');
+                toast.textContent = msg;
+                document.body.appendChild(toast);
+                setTimeout(function () { toast.remove(); }, 3500);
+            }
+
+            document.getElementById('submitBtn').addEventListener('click', function () {
+                var title = document.getElementById('notifTitle').value.trim();
+                var body = document.getElementById('notifBody').value.trim();
+                var link = document.getElementById('notifLink').value.trim();
+                var minLexile = document.getElementById('minLexile').value;
+                var maxLexile = document.getElementById('maxLexile').value;
+
+                if (!title) {
+                    showToast('Title is required', true);
+                    return;
+                }
+
+                var payload = {
+                    type: currentType,
+                    title: title,
+                    body: body,
+                    link: link
+                };
+
+                if (minLexile) payload.min_lexile = parseInt(minLexile);
+                if (maxLexile) payload.max_lexile = parseInt(maxLexile);
+
+                var btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.textContent = 'Sending...';
+
+                fetch('/api/notifications/platform', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                })
+                .then(function (r) { return r.json(); })
+                .then(function (d) {
+                    if (d && d.code === 0) {
+                        showToast('Notification sent successfully!');
+                        document.getElementById('notifTitle').value = '';
+                        document.getElementById('notifBody').value = '';
+                        document.getElementById('notifLink').value = '';
+                        document.getElementById('minLexile').value = '';
+                        document.getElementById('maxLexile').value = '';
+                    } else {
+                        showToast(d.message || 'Failed to send', true);
+                    }
+                })
+                .catch(function (err) {
+                    showToast('Network error: ' + err.message, true);
+                })
+                .finally(function () {
+                    btn.disabled = false;
+                    btn.textContent = 'Send Notification';
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{
+  "name": "rippleread",
+  "version": "1.0.0",
+  "description": "RippleRead is a local reading companion for English learners. It combines a FastAPI backend, SQLite storage, and multi-page HTML/CSS/JavaScript frontend.",
+  "main": "book_library.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build:css": "tailwindcss -i src/tailwind.css -o tailwind.css --minify",
+    "watch:css": "tailwindcss -i src/tailwind.css -o tailwind.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}

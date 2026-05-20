@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>RippleRead &middot; News</title>
+    <link rel="stylesheet" href="tailwind.css">
+    <link rel="stylesheet" href="style.css?v=5">
+    <link rel="stylesheet" href="news.css?v=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
+</head>
+<body>
+    <div id="globalSidebar" data-page="news"></div>
+
+    <main class="news-main">
+        <div class="news-page">
+            <header class="news-header">
+                <h1 class="news-header__title">News</h1>
+                <p class="news-header__subtitle">Stay informed with curated articles at your reading level</p>
+            </header>
+
+            <div class="news-toolbar">
+                <div class="news-categories" id="newsCategories">
+                    <button class="news-cat-btn s--active" data-cat="all">All</button>
+                    <button class="news-cat-btn" data-cat="general">General</button>
+                    <button class="news-cat-btn" data-cat="technology">Technology</button>
+                    <button class="news-cat-btn" data-cat="business">Business</button>
+                    <button class="news-cat-btn" data-cat="science">Science</button>
+                    <button class="news-cat-btn" data-cat="sports">Sports</button>
+                </div>
+                <button class="news-fetch-btn" id="newsFetchBtn" title="Fetch latest news">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"/>
+                        <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+                    </svg>
+                    <span>Fetch Latest</span>
+                </button>
+            </div>
+
+            <div class="news-loading" id="newsLoading">
+                <div class="news-loading__spinner"></div>
+                <p>Loading articles...</p>
+            </div>
+
+            <div class="news-empty" id="newsEmpty" style="display:none;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                </svg>
+                <p>No articles found in this category yet.</p>
+                <p>Click "Fetch Latest" to pull fresh news.</p>
+            </div>
+
+            <div class="news-grid" id="newsGrid"></div>
+
+            <div class="news-footer" id="newsFooter" style="display:none;">
+                <button class="news-load-more" id="newsLoadMore">Load More</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="news.js?v=1"></script>
+    <script src="auth.js"></script>
+    <script src="sidebar.js?v=5"></script>
+</body>
+</html>

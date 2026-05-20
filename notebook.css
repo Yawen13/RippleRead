@@ -1,0 +1,575 @@
+/* Google Fonts loaded via <link> in HTML */
+
+:root {
+    --bg-cream: #FCFBF9;
+    --text-primary: #1E293B;
+    --text-secondary: #64748B;
+    --card-bg: #FFFFFF;
+    --accent-teal: #0D9488;
+    --accent-teal-light: #CCFBF1;
+    --icon-muted: #D1D5DB;
+    --icon-hover: #9CA3AF;
+    --stat-amber: #D97706;
+}
+
+body {
+    font-family: 'Source Serif Pro', Georgia, serif;
+    background-color: var(--bg-cream);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+}
+
+.font-sans {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.font-serif {
+    font-family: 'Source Serif Pro', Georgia, serif;
+}
+
+/* ================================================================
+   Tab Bar
+   ================================================================ */
+.tab-btn {
+    transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.tab-active {
+    border-bottom: 2px solid var(--accent-teal);
+    color: var(--accent-teal);
+}
+
+/* ================================================================
+   Stats Panel — dynamic label transition
+   ================================================================ */
+.stat-label {
+    font-size: 12px;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: color 0.2s ease;
+}
+
+.stat-number {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-number.total {
+    color: #1E293B;
+}
+
+.stat-number.mastered {
+    color: var(--stat-amber);
+}
+
+.stat-number.updated {
+    animation: statPop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes statPop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.18); }
+    100% { transform: scale(1); }
+}
+
+/* ================================================================
+   Vocab Card
+   ================================================================ */
+.vocab-card {
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+.vocab-card.selected {
+    border-color: var(--accent-teal);
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2), 0 4px 16px rgba(13, 148, 136, 0.1);
+    transform: translateY(-1px);
+}
+
+/* ================================================================
+   Sentence Card
+   ================================================================ */
+.sentence-card {
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+}
+
+.sentence-card.selected {
+    border-color: var(--accent-teal) !important;
+    box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.2), 0 4px 16px rgba(13, 148, 136, 0.1);
+    transform: translateY(-1px);
+}
+
+/* ================================================================
+   Mastered Toggle Icon — the core new design
+   ================================================================ */
+.master-toggle {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    transition: background 0.2s ease, transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
+}
+
+.master-toggle:hover {
+    background: #F3F4F6;
+}
+
+.master-toggle svg {
+    width: 18px;
+    height: 18px;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Default: unchecked — pale gray */
+.master-toggle .icon-unchecked {
+    display: block;
+    stroke: var(--icon-muted);
+}
+
+.master-toggle:hover .icon-unchecked {
+    stroke: var(--icon-hover);
+}
+
+.master-toggle .icon-checked {
+    display: none;
+}
+
+/* Mastered: checked — teal with pop animation */
+.master-toggle.mastered {
+    background: var(--accent-teal-light);
+}
+
+.master-toggle.mastered:hover {
+    background: #B2F0E3;
+}
+
+.master-toggle.mastered .icon-unchecked {
+    display: none;
+}
+
+.master-toggle.mastered .icon-checked {
+    display: block;
+    stroke: var(--accent-teal);
+    fill: none;
+}
+
+.master-toggle.mastered svg {
+    transform: scale(1.1);
+    stroke-width: 2.5;
+}
+
+/* Pop-in animation when toggled */
+.master-toggle.pop {
+    animation: masterPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes masterPop {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.25); }
+    60%  { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
+
+/* ================================================================
+   Delete button — inside action bar
+   ================================================================ */
+.card-action-bar {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    z-index: 2;
+}
+
+.card-word .card-action-bar {
+    right: 12px;
+}
+
+.delete-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: #D1D5DB;
+    transition: all 0.2s ease;
+    opacity: 0;
+}
+
+.card-word:hover .delete-btn,
+.card-sentence:hover .delete-btn {
+    opacity: 1;
+}
+
+.delete-btn:hover {
+    background: #FEF2F2;
+    color: #EF4444;
+}
+
+.delete-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ================================================================
+   Word Detail Panel
+   ================================================================ */
+#wordDetailPanel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, margin 0.35s ease;
+    opacity: 0;
+    margin-top: 0;
+}
+
+#wordDetailPanel.open {
+    max-height: 1200px;
+    opacity: 1;
+    margin-top: 1.5rem;
+}
+
+/* Mind Map Center Card */
+.mindmap-center-card {
+    background: white;
+    border: 2px solid var(--accent-teal);
+    border-radius: 12px;
+    padding: 16px 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(13, 148, 136, 0.15);
+}
+
+/* Mind Map Tag Styles */
+.mindmap-tag {
+    background: #F3F4F6;
+    color: #4B5563;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+.mindmap-tag:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mindmap-tag.synonym { background: #E0F2FE; color: #0369A1; }
+.mindmap-tag.antonym { background: #FEE2E2; color: #DC2626; }
+.mindmap-tag.collocation { background: #ECFDF5; color: #065F46; }
+
+/* ================================================================
+   Sentence Detail Panel
+   ================================================================ */
+#sentenceDetailPanel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease, margin 0.35s ease;
+    opacity: 0;
+    margin-top: 0;
+}
+
+#sentenceDetailPanel.open {
+    max-height: 2000px;
+    opacity: 1;
+    margin-top: 1.5rem;
+}
+
+/* ================================================================
+   Fade-in animation for tab content
+   ================================================================ */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.tab-content {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Highlight animation for items opened via ?highlight= param */
+.vocab-card--highlight {
+    animation: highlightPulse 1.5s ease-in-out 3;
+}
+
+@keyframes highlightPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(13, 148, 136, 0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(13, 148, 136, 0); }
+}
+
+/* ================================================================
+   Review Mode — SRS Flashcards
+   ================================================================ */
+.review-stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.review-stat-value {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1E293B;
+}
+
+.review-stat-label {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 11px;
+    color: #94A3B8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Flashcard */
+.review-flashcard {
+    width: 100%;
+    max-width: 480px;
+    min-height: 260px;
+    perspective: 1000px;
+    margin-bottom: 32px;
+}
+
+.review-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 260px;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.review-flashcard.revealed .review-card-inner {
+    transform: rotateY(180deg);
+}
+
+.review-card-front,
+.review-card-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 32px;
+    border-radius: 20px;
+    border: 2px solid #E2E8F0;
+}
+
+.review-card-front {
+    background: linear-gradient(135deg, #F8FAFC 0%, #FFFFFF 100%);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.review-card-back {
+    background: linear-gradient(135deg, #F0FDFA 0%, #FFFFFF 100%);
+    border-color: #99F6E4;
+    box-shadow: 0 4px 24px rgba(13, 148, 136, 0.12);
+    transform: rotateY(180deg);
+}
+
+/* Rating Buttons */
+.review-rating-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    max-width: 480px;
+    width: 100%;
+}
+
+.review-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 16px;
+    border: 2px solid #E2E8F0;
+    border-radius: 14px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 90px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.review-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.review-btn:active {
+    transform: translateY(0);
+}
+
+.review-btn-label {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.review-btn-hint {
+    font-size: 10px;
+    color: #94A3B8;
+}
+
+.review-btn.again {
+    border-color: #FECACA;
+    background: #FFF1F2;
+}
+.review-btn.again:hover {
+    border-color: #FCA5A5;
+    background: #FEE2E2;
+}
+.review-btn.again .review-btn-label {
+    color: #DC2626;
+}
+
+.review-btn.hard {
+    border-color: #FED7AA;
+    background: #FFF7ED;
+}
+.review-btn.hard:hover {
+    border-color: #FDBA74;
+    background: #FFEDD5;
+}
+.review-btn.hard .review-btn-label {
+    color: #EA580C;
+}
+
+.review-btn.good {
+    border-color: #A7F3D0;
+    background: #ECFDF5;
+}
+.review-btn.good:hover {
+    border-color: #6EE7B7;
+    background: #D1FAE5;
+}
+.review-btn.good .review-btn-label {
+    color: #059669;
+}
+
+.review-btn.easy {
+    border-color: #BFDBFE;
+    background: #EFF6FF;
+}
+.review-btn.easy:hover {
+    border-color: #93C5FD;
+    background: #DBEAFE;
+}
+.review-btn.easy .review-btn-label {
+    color: #2563EB;
+}
+
+/* ================================================================
+   Export Dropdown
+   ================================================================ */
+#exportDropdown .export-option {
+    transition: background 0.15s ease;
+    cursor: pointer;
+}
+
+#exportDropdown .export-option:hover {
+    background: #F9FAFB;
+}
+
+/* ============================================================
+   Dark Mode — Notebook (Vocabulary)
+   ============================================================ */
+html.dark {
+    --icon-muted: #555577;
+    --icon-hover: #94a3b8;
+    --accent-teal-light: rgba(45, 212, 191, 0.1);
+}
+
+html.dark body {
+    background-color: #1a1a2e;
+    color: #e2e8f0;
+}
+
+html.dark .notebook-header__title {
+    color: #e2e8f0;
+}
+
+html.dark .notebook-header__subtitle {
+    color: #94a3b8;
+}
+
+html.dark .vocab-card {
+    background: #2a2a3e;
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+html.dark .vocab-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+html.dark .vocab-card__word {
+    color: #e2e8f0;
+}
+
+html.dark .vocab-card__translation {
+    color: #94a3b8;
+}
+
+html.dark .vocab-card__context {
+    color: #64748b;
+}
+
+html.dark .vocab-tab-btn {
+    color: #94a3b8;
+}
+
+html.dark .vocab-tab-btn:hover {
+    background: rgba(45, 212, 191, 0.08);
+    color: #e2e8f0;
+}
+
+html.dark .vocab-tab-btn.vocab-tab-btn--active {
+    background: rgba(45, 212, 191, 0.12);
+    color: #2dd4bf;
+}
+
+html.dark #exportDropdown {
+    background: #2a2a3e;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+html.dark #exportDropdown .export-option:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e2e8f0;
+}
+
+html.dark .notebook-empty {
+    color: #64748b;
+}

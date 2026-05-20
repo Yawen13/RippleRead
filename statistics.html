@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>RippleRead - Reading Statistics</title>
+    <link rel="stylesheet" href="tailwind.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
+</head>
+<body class="min-h-screen flex">
+    <!-- Global Sidebar — loaded by sidebar.js -->
+    <div id="globalSidebar" data-page="statistics"></div>
+
+    <main class="flex-1 ml-64">
+        <div class="max-w-[1400px] mx-auto px-8 py-8">
+            <header class="mb-10">
+                <h1 class="font-serif text-3xl font-semibold text-gray-900">Your Reading Journey</h1>
+                <p class="font-serif text-gray-400 mt-2 text-lg">Every page you read shapes your tomorrow.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                <div class="stat-card bg-white rounded-xl shadow-sm p-6 flex flex-col">
+                    <svg class="w-4 h-4 text-teal-500 mb-4 flex-shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    <p class="font-sans text-[10px] text-gray-400 uppercase tracking-wider mb-1">Books Completed</p>
+                    <p id="stat-books-read-count" class="font-serif text-3xl font-normal text-gray-800 leading-none tracking-tight">0</p>
+                    <p class="font-sans text-[11px] text-gray-400 mt-1.5">Keep turning pages!</p>
+                </div>
+
+                <div class="stat-card bg-white rounded-xl shadow-sm p-6 flex flex-col">
+                    <svg class="w-4 h-4 text-teal-500 mb-4 flex-shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                    </svg>
+                    <p class="font-sans text-[10px] text-gray-400 uppercase tracking-wider mb-1">Vocabulary Mastered</p>
+                    <p id="stat-vocab-count" class="font-serif text-3xl font-normal text-gray-800 leading-none tracking-tight">0</p>
+                    <p class="font-sans text-[11px] text-gray-400 mt-1.5">Every word counts!</p>
+                </div>
+
+                <div class="stat-card bg-white rounded-xl shadow-sm p-6 flex flex-col">
+                    <svg class="w-4 h-4 text-teal-500 mb-4 flex-shrink-0 opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                    </svg>
+                    <p class="font-sans text-[10px] text-gray-400 uppercase tracking-wider mb-1">Average Lexile</p>
+                    <p id="stat-lexile-value" class="font-serif text-3xl font-normal text-gray-800 leading-none tracking-tight">0</p>
+                    <p class="font-sans text-[11px] text-gray-400 mt-1.5">Your reading level grows!</p>
+                </div>
+            </div>
+
+            <div id="heatmap-section" class="bg-white rounded-xl shadow-sm p-8 mb-10 flex flex-col">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 class="font-serif text-xl font-semibold text-gray-900">Reading Activity</h2>
+                        <p class="font-sans text-sm text-gray-400 mt-1">Your reading journey over the past 90 days. Each square represents a day.</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-1.5 mr-4">
+                            <span class="font-sans text-xs text-gray-400">Less</span>
+                            <span class="heatmap-cell-legend bg-gray-50"></span>
+                            <span class="heatmap-cell-legend bg-teal-100"></span>
+                            <span class="heatmap-cell-legend bg-teal-200"></span>
+                            <span class="heatmap-cell-legend bg-teal-400"></span>
+                            <span class="heatmap-cell-legend bg-teal-600"></span>
+                            <span class="font-sans text-xs text-gray-400">More</span>
+                        </div>
+                        <div class="flex items-center gap-1">
+                            <button id="heatmap-prev" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Previous month">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                                </svg>
+                            </button>
+                            <span id="heatmap-month-label" class="font-sans text-sm font-medium text-gray-700 min-w-[100px] text-center"></span>
+                            <button id="heatmap-next" class="p-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Next month">
+                                <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="heatmap-container" class="heatmap-container">
+                    <div class="heatmap-wrapper">
+                        <div id="heatmap-x-axis" class="heatmap-x-axis"></div>
+                        <div id="heatmap-y-axis" class="heatmap-y-axis">
+                            <span class="heatmap-y-label">Mon</span>
+                            <span class="heatmap-y-label">Tue</span>
+                            <span class="heatmap-y-label">Wed</span>
+                            <span class="heatmap-y-label">Thu</span>
+                            <span class="heatmap-y-label">Fri</span>
+                            <span class="heatmap-y-label">Sat</span>
+                            <span class="heatmap-y-label">Sun</span>
+                        </div>
+                        <div id="heatmap-grid" class="heatmap-grid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="statistics.js"></script>
+    <script src="auth.js"></script>
+    <script src="sidebar.js"></script>
+</body>
+</html>

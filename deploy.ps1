@@ -9,7 +9,7 @@ Write-Host ""
 
 # Pull latest code
 Write-Host "[1/3] git pull..."
-git pull origin main
+git pull origin master
 if ($LASTEXITCODE -ne 0) {
     Write-Host "ERROR: git pull failed" -ForegroundColor Red
     exit 1

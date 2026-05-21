@@ -1,0 +1,23 @@
+# Cloudflare Tunnel configuration for RippleRead
+# Place at: C:\Users\<you>\.cloudflared\config.yml
+#
+# Setup steps:
+# 1. cloudflared tunnel login
+# 2. cloudflared tunnel create rippleread
+# 3. cloudflared tunnel route dns rippleread rippleread.me
+# 4. cloudflared tunnel route dns rippleread www.rippleread.me
+# 5. cloudflared tunnel route dns rippleread deploy.rippleread.me
+# 6. cloudflared service install
+# 7. cloudflared tunnel run rippleread
+
+tunnel: YOUR_TUNNEL_UUID_HERE
+credentials-file: C:\Users\Yawen\.cloudflared\YOUR_UUID_HERE.json
+
+ingress:
+  - hostname: rippleread.me
+    service: http://localhost:8001
+  - hostname: www.rippleread.me
+    service: http://localhost:8001
+  - hostname: deploy.rippleread.me
+    service: http://localhost:9000
+  - service: http_status:404

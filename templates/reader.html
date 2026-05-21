@@ -1,0 +1,3294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>RippleRead - Reader</title>
+    <link rel="stylesheet" href="/static/css/tailwind.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
+    <style>
+
+        :root {
+            --bg-cream: #FCFBF9;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --card-bg: #FFFFFF;
+            --accent-teal: #14B8A6;
+            --accent-cyan: #06B6D4;
+        }
+
+        body {
+            font-family: 'Source Serif Pro', Georgia, serif;
+            background-color: var(--bg-cream);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+        }
+
+        .font-sans {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .font-serif {
+            font-family: 'Source Serif Pro', Georgia, serif;
+        }
+
+        /* Hide scrollbar but keep scroll functionality */
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Custom Elegant Scrollbar */
+        .elegant-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: transparent transparent;
+            transition: scrollbar-color 0.3s ease;
+        }
+
+        .elegant-scrollbar:hover {
+            scrollbar-color: rgba(20, 184, 166, 0.25) transparent;
+        }
+
+        .elegant-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .elegant-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .elegant-scrollbar::-webkit-scrollbar-thumb {
+            background: transparent;
+            border-radius: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .elegant-scrollbar:hover::-webkit-scrollbar-thumb {
+            background: rgba(20, 184, 166, 0.25);
+        }
+
+        .elegant-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(20, 184, 166, 0.45);
+        }
+
+        .nav-link {
+            transition: all 0.25s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(20, 184, 166, 0.08);
+            color: var(--accent-teal);
+        }
+
+        .tab-active {
+            color: var(--accent-teal);
+        }
+
+        .tab-active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-teal), var(--accent-cyan));
+            border-radius: 2px;
+            animation: tabUnderlineIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes tabUnderlineIn {
+            from {
+                width: 0;
+                opacity: 0;
+            }
+            to {
+                width: 80%;
+                opacity: 1;
+                }
+            }
+        }
+
+        .tab-btn:hover {
+            color: #4B5563;
+        }
+
+        .vocab-bubble {
+            transition: all 0.3s ease;
+        }
+
+        .vocab-bubble:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Slider Styles */
+        .slider-thumb::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-teal), var(--accent-cyan));
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(20, 184, 166, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .slider-thumb::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 3px 10px rgba(20, 184, 166, 0.5);
+        }
+
+        .slider-thumb::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-teal), var(--accent-cyan));
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(20, 184, 166, 0.4);
+            border: none;
+        }
+
+        /* Smooth fade-in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-transition {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .loading-pulse {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        /* Breathing Circle Animation */
+        .breathing-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-teal), var(--accent-cyan));
+            animation: breathe 2s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 0.4; }
+        }
+
+        /* ==================== Responsive AI Panel ==================== */
+        #rightPanel {
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #panelOverlay {
+            transition: opacity 0.35s ease;
+        }
+
+        @media (max-width: 1439px) {
+            #rightPanel {
+                position: fixed;
+                right: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 50;
+                transform: translateX(100%);
+                box-shadow: -8px 0 30px rgba(0, 0, 0, 0.12);
+            }
+            #rightPanel.panel-open {
+                transform: translateX(0);
+            }
+            #panelOverlay {
+                display: block;
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.2);
+                z-index: 49;
+                opacity: 0;
+                pointer-events: none;
+            }
+            #panelOverlay.active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+        }
+
+        @media (min-width: 1440px) {
+            #rightPanel {
+                position: sticky;
+                transform: none;
+                box-shadow: none;
+            }
+            #panelOverlay { display: none; }
+        }
+
+        #panelToggleBtn {
+            transition: opacity 0.3s ease;
+        }
+
+        /* AI Companion Chat */
+        .chat-bubble-user {
+            animation: chatSlideIn 0.3s ease-out;
+        }
+
+        .chat-bubble-ai {
+            animation: chatSlideIn 0.3s ease-out;
+        }
+
+        @keyframes chatSlideIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* AI Thinking Dots Animation */
+        .thinking-bubble {
+            animation: thinkingFadeIn 0.35s ease-out;
+        }
+
+        @keyframes thinkingFadeIn {
+            from { opacity: 0; transform: translateY(6px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .thinking-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #14B8A6, #0D9488);
+            display: inline-block;
+            animation: dotBounce 1.4s ease-in-out infinite;
+            box-shadow: 0 0 6px rgba(20, 184, 166, 0.3);
+        }
+
+        .thinking-dot:nth-child(1) { animation-delay: 0s; }
+        .thinking-dot:nth-child(2) { animation-delay: 0.16s; }
+        .thinking-dot:nth-child(3) { animation-delay: 0.32s; }
+
+        @keyframes dotBounce {
+            0%, 80%, 100% {
+                transform: translateY(0) scale(1);
+                opacity: 0.4;
+            }
+            40% {
+                transform: translateY(-8px) scale(1.15);
+                opacity: 1;
+            }
+        }
+
+        /* Thinking ring pulse for the container */
+        .thinking-ring {
+            animation: ringPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes ringPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.15); }
+            50% { box-shadow: 0 0 0 6px rgba(20, 184, 166, 0); }
+        }
+
+        @keyframes blink-cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .typewriter-cursor::after {
+            content: '|';
+            animation: blink-cursor 0.8s step-end infinite;
+            color: var(--accent-teal);
+            font-weight: 300;
+        }
+
+
+        /* Mind Map Center Card */
+        .mindmap-center-card {
+            background: white;
+            border: 2px solid var(--accent-teal);
+            border-radius: 12px;
+            padding: 16px 24px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(20, 184, 166, 0.15);
+        }
+
+        /* Mind Map Tag Styles */
+        .mindmap-tag {
+            background: #F3F4F6;
+            color: #4B5563;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            font-family: sans-serif;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .mindmap-tag:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .mindmap-tag.synonym {
+            background: #E0F2FE;
+            color: #0369A1;
+        }
+
+        .mindmap-tag.antonym {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        .ai-annotation-trigger {
+            display: inline-block;
+            margin-left: 2px;
+            font-size: 14px;
+            color: rgba(20, 184, 166, 0.7);
+            opacity: 0.7;
+            cursor: pointer;
+            transition: opacity 0.25s ease, transform 0.25s ease, color 0.25s ease;
+            animation: sparklePulse 2.5s ease-in-out infinite;
+            vertical-align: middle;
+            line-height: 1;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .ai-annotation-trigger:hover {
+            opacity: 1;
+            color: rgba(20, 184, 166, 1);
+            transform: scale(1.2);
+        }
+
+        .ai-annotation-trigger:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes sparklePulse {
+            0%, 100% {
+                opacity: 0.5;
+                transform: scale(0.95) translateY(0);
+            }
+            50% {
+                opacity: 0.9;
+                transform: scale(1.08) translateY(-1px);
+            }
+        }
+
+        .ai-popover {
+            position: absolute;
+            z-index: 100;
+            max-width: 320px;
+            background: #FCFBF9;
+            border: 1px solid rgba(20, 184, 166, 0.25);
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+            font-family: 'Source Serif Pro', Georgia, serif;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #334155;
+            animation: popoverIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
+
+        .ai-popover::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .ai-popover.arrow-top::before {
+            bottom: -8px;
+            left: 20px;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid #FCFBF9;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.04));
+        }
+
+        .ai-popover.arrow-bottom::before {
+            top: -8px;
+            left: 20px;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 8px solid #FCFBF9;
+            filter: drop-shadow(0 -1px 1px rgba(0,0,0,0.04));
+        }
+
+        .ai-popover-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+
+        .ai-popover-icon {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #14B8A6, #06B6D4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ai-popover-icon span {
+            font-size: 12px;
+            color: white;
+            line-height: 1;
+        }
+
+        .ai-popover-label {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #14B8A6;
+        }
+
+        .ai-popover-close {
+            margin-left: auto;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #94A3B8;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            line-height: 1;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .ai-popover-close:hover {
+            color: #475569;
+            background: #F1F5F9;
+        }
+
+        .ai-popover-body {
+            font-family: 'Source Serif Pro', Georgia, serif;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #334155;
+        }
+
+        @keyframes popoverIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Tab Content Transition */
+        .tab-content {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .custom-highlight {
+            transition: all 0.3s ease;
+        }
+
+        /* ── Dark Mode ─────────────────────────── */
+        html.dark body {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .bg-\[\#FCFBF9\] {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .bg-white {
+            background-color: #2a2a3e !important;
+        }
+
+        html.dark .bg-white\/60 {
+            background-color: rgba(42, 42, 62, 0.6) !important;
+        }
+
+        html.dark .bg-white\/90 {
+            background-color: rgba(42, 42, 62, 0.9) !important;
+        }
+
+        html.dark .bg-\[\#FCFBF8\] {
+            background-color: #1a1a2e !important;
+        }
+
+        html.dark .text-gray-900 {
+            color: #e2e8f0 !important;
+        }
+
+        html.dark .text-gray-800 {
+            color: #cbd5e1 !important;
+        }
+
+        html.dark .text-gray-700 {
+            color: #cbd5e1 !important;
+        }
+
+        html.dark .text-gray-600 {
+            color: #94a3b8 !important;
+        }
+
+        html.dark .text-gray-500 {
+            color: #64748b !important;
+        }
+
+        html.dark .text-gray-400 {
+            color: #555577 !important;
+        }
+
+        html.dark .border-gray-100 {
+            border-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        html.dark .border-gray-200 {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+
+        html.dark .border-gray-300 {
+            border-color: rgba(255, 255, 255, 0.12) !important;
+        }
+
+        html.dark .hover\:bg-gray-50:hover {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+        }
+
+        html.dark .hover\:bg-gray-100:hover {
+            background-color: rgba(255, 255, 255, 0.08) !important;
+        }
+
+        html.dark .bg-gray-50 {
+            background-color: rgba(255, 255, 255, 0.04) !important;
+        }
+
+        html.dark .bg-gray-100 {
+            background-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        html.dark .shadow-sm {
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        html.dark .shadow-md {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        html.dark .shadow-lg {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3) !important;
+        }
+
+        html.dark .backdrop-blur-lg {
+            backdrop-filter: blur(16px);
+        }
+
+        html.dark .bg-teal-50 {
+            background-color: rgba(45, 212, 191, 0.1) !important;
+        }
+
+        html.dark .text-teal-700 {
+            color: #2dd4bf !important;
+        }
+
+        html.dark .text-teal-600 {
+            color: #2dd4bf !important;
+        }
+
+        html.dark .text-teal-500 {
+            color: #14b8a6 !important;
+        }
+
+        /* ── Dark Mode: CRITICAL - slate text (reader content) ── */
+        html.dark .text-slate-800 { color: #e2e8f0 !important; }
+        html.dark .text-slate-700 { color: #cbd5e1 !important; }
+        html.dark .text-slate-600 { color: #94a3b8 !important; }
+        html.dark .text-slate-500 { color: #64748b !important; }
+        html.dark .text-slate-400 { color: #555577 !important; }
+        html.dark .text-slate-300 { color: #3a3a55 !important; }
+        html.dark .bg-slate-50 { background-color: rgba(255,255,255,0.04) !important; }
+        html.dark .bg-slate-100 { background-color: rgba(255,255,255,0.06) !important; }
+        html.dark .bg-slate-200 { background-color: rgba(255,255,255,0.1) !important; }
+        html.dark .border-slate-100 { border-color: rgba(255,255,255,0.08) !important; }
+        html.dark .border-slate-200 { border-color: rgba(255,255,255,0.1) !important; }
+
+        /* ── Dark Mode: blue/emerald variants for reader panels ── */
+        html.dark .text-blue-700 { color: #93c5fd !important; }
+        html.dark .text-blue-800 { color: #bfdbfe !important; }
+        html.dark .bg-blue-50 { background-color: rgba(59,130,246,0.1) !important; }
+        html.dark .border-blue-100 { border-color: rgba(59,130,246,0.15) !important; }
+        html.dark .text-emerald-700 { color: #6ee7b7 !important; }
+        html.dark .bg-emerald-50 { background-color: rgba(16,185,129,0.1) !important; }
+
+        /* ── Dark Mode: indigo/violet/amber variants ── */
+        html.dark .text-indigo-700 { color: #a5b4fc !important; }
+        html.dark .bg-indigo-50 { background-color: rgba(99,102,241,0.1) !important; }
+        html.dark .text-amber-700 { color: #fde68a !important; }
+        html.dark .bg-amber-50 { background-color: rgba(245,158,11,0.1) !important; }
+        html.dark .text-rose-700 { color: #fda4af !important; }
+        html.dark .bg-rose-50 { background-color: rgba(244,63,94,0.1) !important; }
+        html.dark .text-purple-700 { color: #d8b4fe !important; }
+        html.dark .bg-purple-50 { background-color: rgba(168,85,247,0.1) !important; }
+        html.dark .text-cyan-700 { color: #67e8f9 !important; }
+        html.dark .bg-cyan-50 { background-color: rgba(6,182,212,0.1) !important; }
+        html.dark .text-orange-700 { color: #fdba74 !important; }
+        html.dark .bg-orange-50 { background-color: rgba(249,115,22,0.1) !important; }
+        html.dark .text-pink-700 { color: #f9a8d4 !important; }
+        html.dark .bg-pink-50 { background-color: rgba(236,72,153,0.1) !important; }
+
+        /* ── Dark Mode: AI popover ── */
+        html.dark .ai-popover {
+            background: #2a2a3e;
+            border-color: rgba(45, 212, 191, 0.25);
+            color: #cbd5e1;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        html.dark .ai-popover.arrow-top::before {
+            border-top-color: #2a2a3e;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
+        }
+
+        html.dark .ai-popover.arrow-bottom::before {
+            border-bottom-color: #2a2a3e;
+            filter: drop-shadow(0 -1px 1px rgba(0,0,0,0.15));
+        }
+
+        html.dark .ai-popover-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html.dark .ai-popover-label {
+            color: #2dd4bf;
+        }
+
+        html.dark .ai-popover-body {
+            color: #cbd5e1;
+        }
+
+        html.dark .ai-popover-close {
+            color: #64748b;
+        }
+
+        html.dark .ai-popover-close:hover {
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* ── Dark Mode: AI popover scrollbar ── */
+        html.dark .ai-popover {
+            overflow-y: auto;
+            max-height: 320px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+        }
+
+        html.dark .ai-popover::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        html.dark .ai-popover::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        html.dark .ai-popover::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+
+        /* ── Dark Mode: Chat area scrollbar ── */
+        html.dark #chatMessages {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+        }
+
+        html.dark #chatMessages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        html.dark #chatMessages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        html.dark #chatMessages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+        }
+
+        /* ── Dark Mode: Reader textarea / inputs ── */
+        html.dark #textContent textarea,
+        html.dark #textContent .content-area {
+            color: #e2e8f0;
+            background: transparent;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .animate-spin-custom {
+            animation: spin 0.6s linear;
+        }
+
+        #readerFavBtn.fav-active {
+            color: #EF4444;
+            border-color: #FECACA;
+            background: #FEF2F2;
+        }
+
+        #readerFavBtn.fav-active:hover {
+            color: #DC2626;
+            border-color: #FCA5A5;
+            background: #FEE2E2;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-[#FCFBF9]">
+    <!-- Top Progress Bar - YouTube-style -->
+    <div id="topProgressBar" class="fixed top-0 left-0 h-1 bg-teal-500 z-50 transition-all duration-300"></div>
+
+    <div id="globalSidebar" data-page="reader"></div>
+    <aside class="group fixed left-0 top-0 z-50 h-screen w-16 hover:w-64 bg-white/95 backdrop-blur-lg border-r border-gray-100 shadow-sm hover:shadow-2xl flex flex-col transition-all duration-300 ease-in-out">
+        <div class="p-3 border-b border-gray-100 flex items-center justify-center group-hover:justify-start gap-3 min-h-0">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden">
+                <img src="/static/img/RippleReadLOGO_1.png" alt="RippleRead" class="w-full h-full object-cover" />
+            </div>
+            <span class="font-serif text-lg font-bold text-gray-900 opacity-0 w-0 overflow-hidden group-hover:opacity-100 group-hover:w-auto transition-all duration-300 whitespace-nowrap">RippleRead</span>
+        </div>
+        <nav class="py-4 px-2 space-y-1">
+            <a href="index.html" class="flex items-center justify-center group-hover:justify-start gap-3 py-3 px-3 hover:bg-teal-50 rounded-xl text-teal-600 font-medium transition-all">
+                <svg class="w-5 h-5 text-teal-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+                <span class="font-sans opacity-0 w-0 overflow-hidden group-hover:opacity-100 group-hover:w-auto transition-all duration-300 whitespace-nowrap">Home</span>
+            </a>
+        </nav>
+
+        <!-- Table of Contents -->
+        <div id="sidebarTOC" class="flex-1 overflow-y-auto elegant-scrollbar border-t border-gray-100 py-3 px-2 group-hover:px-2">
+            <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-1 mb-2">
+                <p class="font-sans text-[10px] font-semibold text-gray-400 uppercase tracking-widest flex-1">Contents</p>
+                <button id="tocRefreshBtn" class="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-teal-600 transition-colors" title="Refresh table of contents">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                </button>
+            </div>
+            <nav id="tocList" class="space-y-0.5"></nav>
+            <!-- TOC Hint (visible when collapsed) -->
+            <div id="tocHint" class="flex flex-col items-center group-hover:hidden py-4">
+                <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                </svg>
+                <span class="text-[8px] text-gray-300 font-sans mt-1.5">TOC</span>
+            </div>
+        </div>
+        <div class="p-3 border-t border-gray-100">
+            <div class="flex items-center justify-center group-hover:justify-start gap-3 cursor-pointer" id="sidebarUserArea" title="Edit your profile">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-teal-400 to-cyan-500 flex items-center justify-center flex-shrink-0">
+                    <span class="text-white text-sm font-semibold" id="sidebar-user-avatar">E</span>
+                </div>
+                <div class="font-sans opacity-0 w-0 overflow-hidden group-hover:opacity-100 group-hover:w-auto transition-all duration-300 whitespace-nowrap">
+                    <p class="text-sm font-medium text-gray-900 truncate" id="sidebar-user-name">Explorer</p>
+                    <p class="text-xs text-teal-600 font-medium">Pro Plan</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <div class="flex ml-16" style="min-height: 100vh;">
+        <!-- Main Reading Area -->
+        <main class="flex-1 overflow-y-auto hide-scrollbar" style="height: 100vh;">
+            <!-- Article Container -->
+            <article class="max-w-[700px] mx-auto py-16 px-8">
+            <!-- Article Header -->
+            <header class="mb-12">
+                <h1 class="font-serif text-4xl font-bold text-slate-800 leading-tight" id="bookTitle">
+                    Loading...
+                </h1>
+                <p class="font-sans text-sm text-teal-600 font-medium mt-2 mb-5" id="chapterTitle"></p>
+                
+                <!-- AI Adjusted Badge -->
+                <div id="aiBadge" class="hidden mb-4">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-teal-100 to-cyan-100 text-teal-700 text-sm font-medium rounded-full">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        AI Adjusted Version (Target: <span id="aiTargetLevel">800L</span>)
+                    </span>
+                </div>
+                
+                <div class="flex items-center flex-wrap gap-4 font-sans">
+                    <p class="text-gray-600 font-medium" id="bookAuthor">Loading...</p>
+                    <span class="text-gray-300">|</span>
+                    <p class="text-gray-500 text-sm" id="publishDate"></p>
+                    <span class="text-gray-300">|</span>
+                    <span class="px-3 py-1 bg-blue-50 text-blue-700 text-sm font-medium rounded-full" id="lexileLevel">
+                        Loading...
+                    </span>
+                    <span class="px-3 py-1 bg-emerald-50 text-emerald-700 text-sm font-medium rounded-full" id="sourceType">
+                        Loading...
+                    </span>
+                    <button id="readerFavBtn" type="button" onclick="toggleReaderFavorite()" class="ml-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-gray-200 bg-white text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all font-sans text-sm font-medium cursor-pointer select-none" title="Add to favorites">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        <span id="readerFavText">Save</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Reading Content -->
+            <div id="readingContent" class="space-y-6">
+                <!-- Loading Indicator -->
+                <div class="text-center text-gray-400 py-20" id="loadingIndicator">
+                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    <p>Loading content...</p>
+                </div>
+            </div>
+
+            <!-- Chapter Navigation -->
+            <div id="chapterNav" class="hidden mt-12 space-y-4">
+                <div class="flex items-center justify-between gap-4">
+                    <button id="prevChapterBtn" class="flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:border-teal-300 hover:text-teal-700 hover:shadow-sm transition-all font-sans text-sm font-medium">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        Previous Chapter
+                    </button>
+                    <span id="chapterIndicator" class="font-sans text-xs text-gray-400 flex-shrink-0"></span>
+                    <button id="nextChapterBtn" class="flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 bg-white text-slate-600 hover:border-teal-300 hover:text-teal-700 hover:shadow-sm transition-all font-sans text-sm font-medium">
+                        Next Chapter
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+                <div class="flex justify-center">
+                    <button id="completeBtn" class="flex items-center gap-2 px-6 py-2.5 rounded-full bg-teal-50 text-teal-700 hover:bg-teal-100 hover:text-teal-800 transition-all font-sans text-sm font-medium border border-teal-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        Mark as Completed
+                    </button>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Panel Toggle Button (visible on sub-1440px when panel is closed) -->
+    <button id="panelToggleBtn" class="hidden fixed right-0 top-1/2 -translate-y-1/2 z-45 bg-white border border-gray-200 rounded-l-xl shadow-md px-2 py-6 hover:bg-teal-50 transition-all" onclick="openRightPanel()" title="Open AI Panel">
+        <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+
+    <!-- Panel Overlay (for sub-1440px) -->
+    <div id="panelOverlay" class="hidden" onclick="closeRightPanel()"></div>
+
+    <!-- Right Sidebar - Smart AI Panel -->
+    <aside id="rightPanel" class="w-[320px] flex-shrink-0 bg-white border-l border-gray-100 flex flex-col h-screen sticky top-0 z-40">
+        <!-- Panel Header with Close -->
+        <div class="flex items-center justify-between border-b border-gray-100 flex-shrink-0">
+            <div class="flex flex-1">
+                <button 
+                    id="tab-understand" 
+                    class="tab-btn flex-1 tab-active text-teal-600"
+                    onclick="switchTab('understand')"
+                >
+                    Decode
+                </button>
+                <button 
+                    id="tab-explore" 
+                    class="tab-btn flex-1"
+                    onclick="switchTab('explore')"
+                >
+                    Insight
+                </button>
+                <button 
+                    id="tab-connect" 
+                    class="tab-btn flex-1"
+                    onclick="switchTab('connect')"
+                >
+                    Mentor
+                </button>
+            </div>
+            <button onclick="closeRightPanel()" class="p-3 hover:bg-gray-100 transition-colors flex-shrink-0 lg:hidden">
+                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Tab Content Container -->
+        <div class="flex-1 overflow-y-auto overflow-x-hidden elegant-scrollbar">
+            
+            <!-- Decode Tab: Vocabulary Mind Map -->
+            <div id="tab-understand-content" class="p-5 tab-content">
+                <h3 id="understandTab" class="text-sm font-semibold text-gray-700 font-sans mb-4">Word Decoder</h3>
+                
+                <!-- Mind Map Container -->
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                    <!-- Empty State -->
+                    <div id="mindmapEmpty" class="text-center py-8">
+                        <svg class="w-10 h-10 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        <p class="text-sm text-gray-500 font-sans">Select a word to explore</p>
+                        <p class="text-xs text-gray-400 font-sans mt-1">Click any word in the article</p>
+                    </div>
+                    
+                    <!-- Skeleton Loading State -->
+                    <div id="mindmapLoading" class="hidden py-6 space-y-5">
+                        <div class="flex flex-col items-center animate-pulse">
+                            <div class="h-10 w-32 bg-slate-100 rounded-lg mb-2"></div>
+                            <div class="h-4 w-48 bg-slate-50 rounded"></div>
+                        </div>
+                        <div class="animate-pulse">
+                            <div class="h-3 w-20 bg-slate-100 rounded mb-2"></div>
+                            <div class="h-14 w-full bg-slate-50 rounded-xl"></div>
+                        </div>
+                        <div class="animate-pulse">
+                            <div class="h-3 w-16 bg-slate-100 rounded mb-2"></div>
+                            <div class="flex gap-2">
+                                <div class="h-8 w-28 bg-slate-50 rounded-full"></div>
+                                <div class="h-8 w-36 bg-slate-50 rounded-full"></div>
+                                <div class="h-8 w-24 bg-slate-50 rounded-full"></div>
+                            </div>
+                        </div>
+                        <div class="animate-pulse">
+                            <div class="h-3 w-20 bg-slate-100 rounded mb-2"></div>
+                            <div class="flex gap-2">
+                                <div class="h-8 w-32 bg-slate-50 rounded-full"></div>
+                                <div class="h-8 w-40 bg-slate-50 rounded-full"></div>
+                                <div class="h-8 w-28 bg-slate-50 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sentence Loading State -->
+                    <div id="sentenceLoading" class="hidden py-8">
+                        <div class="bg-white border border-gray-100 rounded-xl p-6 mb-4">
+                            <div class="flex items-center justify-center gap-3">
+                                <div class="w-5 h-5 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+                                <span class="text-sm text-gray-500 font-sans">AI is analyzing this sentence...</span>
+                            </div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-xl p-4 mb-4 animate-pulse">
+                            <div class="h-3 bg-gray-200 rounded w-3/4 mb-4"></div>
+                            <div class="h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="h-2 bg-gray-100 rounded w-1/2"></div>
+                        </div>
+                        <div class="bg-white border border-gray-100 rounded-xl p-4 mb-4 animate-pulse">
+                            <div class="h-3 bg-gray-200 rounded w-1/2 mb-3"></div>
+                            <div class="h-2 bg-gray-100 rounded mb-2"></div>
+                            <div class="h-2 bg-gray-100 rounded"></div>
+                        </div>
+                        <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 animate-pulse">
+                            <div class="h-3 bg-blue-100 rounded w-1/3 mb-3"></div>
+                            <div class="h-2 bg-blue-50 rounded"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Error State -->
+                    <div id="mindmapError" class="hidden text-center py-8">
+                        <svg class="w-10 h-10 text-red-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <p id="mindmapErrorMessage" class="text-sm text-red-600 font-sans"></p>
+                        <p class="text-xs text-gray-400 font-sans mt-1">Please try again later</p>
+                    </div>
+                    
+                    <!-- Word Mind Map Content -->
+                    <div id="mindmapContent" class="hidden">
+                        <div class="mindmap-center-card mb-6 relative">
+                            <span id="mindmapWord" class="text-lg font-bold text-gray-800 font-serif block"></span>
+                            <span id="mindmapTranslation" class="text-xs text-teal-600 font-sans mt-1 block"></span>
+                            <button id="mindmapSaveBtn" class="absolute top-2 right-2 p-1.5 rounded-lg hover:bg-slate-100 transition-all text-slate-400 hover:text-red-500" data-text="" data-translation="">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                        <div id="etymologySection" class="mb-6 hidden">
+                            <h4 class="text-xs font-medium text-gray-400 font-sans mb-2 uppercase tracking-wider">Etymology</h4>
+                            <div id="mindmapEtymology" class="bg-slate-50 border border-slate-100 rounded-xl p-4 text-sm text-slate-700 font-sans leading-relaxed"></div>
+                        </div>
+                        
+                        <div id="synonymsSection" class="mb-6 hidden">
+                            <h4 class="text-xs font-medium text-gray-400 font-sans mb-2 uppercase tracking-wider">Synonyms</h4>
+                            <div id="mindmapSynonyms" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        
+                        <div id="antonymsSection" class="mb-6 hidden">
+                            <h4 class="text-xs font-medium text-gray-400 font-sans mb-2 uppercase tracking-wider">Antonyms</h4>
+                            <div id="mindmapAntonyms" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        
+                        <div id="collocationsSection" class="mb-2 hidden">
+                            <h4 class="text-xs font-medium text-gray-400 font-sans mb-2 uppercase tracking-wider">Collocations</h4>
+                            <div id="mindmapCollocations" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sentence Error State -->
+                    <div id="sentenceError" class="hidden text-center py-8">
+                        <svg class="w-10 h-10 text-red-400 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <p id="sentenceErrorMessage" class="text-sm text-red-600 font-sans"></p>
+                        <p class="text-xs text-gray-400 font-sans mt-1">Please try again later</p>
+                    </div>
+                    
+                    <!-- Sentence Analysis Content -->
+                    <div id="sentenceContent" class="hidden space-y-6">
+                        <div id="translationCard" class="border border-slate-100 rounded-xl shadow-sm bg-white p-5 relative">
+                            <h4 class="text-xs font-medium text-gray-400 font-sans mb-3 uppercase tracking-wider">Translation</h4>
+                            <p id="translationText" class="text-lg text-gray-800 font-sans leading-relaxed"></p>
+                            <button id="sentenceSaveBtn" class="absolute top-3 right-3 p-1.5 rounded-lg hover:bg-slate-100 transition-all text-slate-400 hover:text-red-500" data-text="" data-translation="">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="grammarCard" class="border border-slate-100 rounded-xl shadow-sm bg-white p-5">
+                            <h4 class="text-xs font-medium text-gray-400 font-sans mb-4 uppercase tracking-wider">Grammar Structure</h4>
+                            <div class="flex flex-col gap-3">
+                                <div>
+                                    <span class="inline-block bg-slate-50 text-slate-500 rounded border border-slate-100 px-2 py-0.5 text-xs mr-2 font-medium">Subject</span>
+                                    <span id="grammarSubject" class="text-sm text-slate-700 font-sans"></span>
+                                </div>
+                                <div>
+                                    <span class="inline-block bg-slate-50 text-slate-500 rounded border border-slate-100 px-2 py-0.5 text-xs mr-2 font-medium">Verb</span>
+                                    <span id="grammarVerb" class="text-sm text-slate-700 font-sans"></span>
+                                </div>
+                                <div>
+                                    <span class="inline-block bg-slate-50 text-slate-500 rounded border border-slate-100 px-2 py-0.5 text-xs mr-2 font-medium">Object</span>
+                                    <span id="grammarObject" class="text-sm text-slate-700 font-sans"></span>
+                                </div>
+                                <div class="mt-1 pt-3 border-t border-slate-100">
+                                    <span class="inline-block bg-cyan-50 text-cyan-700 rounded border border-cyan-200 px-2 py-0.5 text-xs mr-2 font-medium">Tense & Clause</span>
+                                    <span id="grammarTense" class="text-sm text-cyan-700 font-sans"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="keyPhrasesCard" class="border border-slate-100 rounded-xl shadow-sm bg-white p-5">
+                            <h4 class="text-xs font-medium text-gray-400 font-sans mb-4 uppercase tracking-wider">Key Phrases</h4>
+                            <div id="keyPhrasesList" class="flex flex-col gap-3"></div>
+                        </div>
+                        <div id="aiTipCard" class="bg-blue-50/50 border border-blue-100 rounded-xl shadow-sm p-5">
+                            <div class="flex items-start gap-3">
+                                <span class="text-lg flex-shrink-0 mt-0.5">💡</span>
+                                <div>
+                                    <h4 class="text-xs font-medium text-blue-600 font-sans mb-2 uppercase tracking-wider">AI Tutor Tip</h4>
+                                    <p id="aiTipText" class="text-sm text-blue-800 font-sans leading-relaxed"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insight Tab: Reading Difficulty + Article Summary -->
+            <div id="tab-explore-content" class="p-5 tab-content hidden">
+                
+                <!-- Reading Difficulty Section -->
+                <div class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-700 font-sans mb-4">Reading Insight</h3>
+                    
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs text-gray-500 font-sans">Beginner (400L)</span>
+                            <span class="text-xs text-gray-500 font-sans">Advanced (1200L+)</span>
+                        </div>
+                        
+                        <input 
+                            type="range" 
+                            id="lexileSlider" 
+                            min="400" 
+                            max="1200" 
+                            value="800" 
+                            step="100"
+                            class="w-full h-2 bg-gray-100 rounded-full appearance-none cursor-pointer slider-thumb"
+                        />
+                        
+                        <div class="text-center mt-3">
+                            <span class="text-xs text-gray-500 font-sans">Current Level: </span>
+                            <span id="currentLexile" class="text-sm font-semibold text-teal-600">800L</span>
+                        </div>
+                        
+                        <button id="rewriteBtn" class="hidden mt-4 w-full bg-teal-600 hover:bg-teal-700 text-white rounded-lg py-2 text-sm font-sans font-medium transition-all">✨ Rewrite Article to <span id="rewriteTarget">800</span>L</button>
+                        
+                        <div id="difficultyLoading" class="hidden mt-3 text-center">
+                            <span class="text-xs text-gray-500 font-sans">Rewriting with AI...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Insight Section -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-700 font-sans mb-4">Article Insight</h3>
+                    
+                    <div id="summaryInitial" class="bg-white rounded-xl shadow-sm border border-slate-100 p-5 cursor-pointer hover:shadow-md transition-shadow" onclick="fetchSummary()">
+                        <div class="flex items-center justify-center gap-2 text-gray-500">
+                            <span class="text-lg">✨</span>
+                            <span class="text-sm font-medium font-sans">Click to generate AI summary</span>
+                        </div>
+                    </div>
+
+                    <div id="summaryLoading" class="hidden bg-white rounded-xl shadow-sm border border-slate-100 p-5 transition-all duration-500 ease-in-out">
+                        <div class="animate-pulse space-y-3">
+                            <div class="h-5 bg-slate-100 rounded-lg w-full"></div>
+                            <div class="h-5 bg-slate-100 rounded-lg w-4/5"></div>
+                            <div class="space-y-2 pt-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="h-2 w-2 rounded-full bg-slate-200"></div>
+                                    <div class="h-3 bg-slate-100 rounded w-3/4"></div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="h-2 w-2 rounded-full bg-slate-200"></div>
+                                    <div class="h-3 bg-slate-100 rounded w-2/3"></div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div class="h-2 w-2 rounded-full bg-slate-200"></div>
+                                    <div class="h-3 bg-slate-100 rounded w-4/5"></div>
+                                </div>
+                            </div>
+                            <div class="mt-3 h-12 bg-blue-50 rounded-lg w-full"></div>
+                        </div>
+                        <p class="font-sans text-xs text-gray-400 text-center mt-4">AI is reading the article...</p>
+                    </div>
+
+                    <div id="summaryResult" class="hidden bg-white rounded-xl shadow-sm border border-slate-100 p-5 relative transition-all duration-500 ease-in-out">
+                        <button class="absolute top-3 right-3 p-1 hover:bg-gray-100 rounded-lg transition-colors" onclick="closeSummary()">
+                            <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+
+                        <div class="flex items-center gap-2 mb-4">
+                            <span class="text-base">✨</span>
+                            <h4 class="font-sans text-xs font-semibold text-gray-400 uppercase tracking-wider">AI Insight</h4>
+                        </div>
+
+                        <p id="summaryOneSentence" class="font-serif text-slate-800 font-medium text-lg leading-relaxed mb-5"></p>
+
+                        <div class="mb-5">
+                            <ul id="summaryTakeaways" class="flex flex-col gap-2.5"></ul>
+                        </div>
+
+                        <div id="summaryFocus" class="bg-blue-50/50 border border-blue-100 rounded-lg p-4 flex items-start gap-3">
+                            <span class="text-base flex-shrink-0 mt-0.5">💡</span>
+                            <p id="summaryFocusText" class="font-sans text-sm text-blue-800 leading-relaxed"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mentor Tab: AI Companion Chat -->
+            <div id="tab-connect-content" class="flex flex-col h-full tab-content hidden">
+                <div class="flex-1 overflow-y-auto px-4 py-4 space-y-4" id="chatMessages">
+                    <div class="text-center py-12 text-gray-400">
+                        <svg class="w-10 h-10 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        <p id="chatInitialText" class="font-sans text-sm">Open a chapter to meet your AI companion</p>
+                    </div>
+                </div>
+                <div class="flex-shrink-0 border-t border-gray-100 p-3">
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="chatInput" placeholder="Ask about this chapter..." class="flex-1 px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl font-sans text-sm focus:outline-none focus:ring-2 focus:ring-teal-200 focus:border-teal-400 transition-all" autocomplete="off" />
+                        <button id="chatSendBtn" class="p-2.5 bg-teal-500 text-white rounded-xl hover:bg-teal-600 transition-colors flex-shrink-0" onclick="sendCompanionMessage()">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+    </div>
+
+    <script>
+        console.log('Reader script loaded');
+
+        // Get book ID from URL
+        function getBookId() {
+            var params = new URLSearchParams(window.location.search);
+            var id = params.get('id');
+            console.log('[Reader] Book ID from URL:', id);
+            return id;
+        }
+
+        function getChapterFromURL() {
+            var params = new URLSearchParams(window.location.search);
+            var raw = params.get('chapter');
+            if (raw !== null && raw !== undefined) {
+                var idx = parseInt(raw, 10);
+                return isNaN(idx) ? null : idx;
+            }
+            return null;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Get element safely
+        function getElement(id) {
+            const el = document.getElementById(id);
+            if (!el) {
+                console.error('[Reader] Element not found:', id);
+            }
+            return el;
+        }
+
+        // Load book content from API
+        async function loadBookContent(bookId) {
+            console.log('[Reader] Loading book content for ID:', bookId);
+            
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(function() { controller.abort(); }, 30000);
+                
+                const response = await fetch('/api/read/' + bookId, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                
+                console.log('[Reader] Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                
+                const book = await response.json();
+                console.log('[Reader] Book data received:', book);
+                
+                // Update DOM with book data
+                const titleEl = getElement('bookTitle');
+                const authorEl = getElement('bookAuthor');
+                const sourceTypeEl = getElement('sourceType');
+                const lexileLevelEl = getElement('lexileLevel');
+                const publishDateEl = getElement('publishDate');
+                
+                if (titleEl) titleEl.textContent = book.title || 'No title';
+                if (authorEl) authorEl.textContent = book.author || 'Unknown';
+                if (sourceTypeEl) sourceTypeEl.textContent = book.source_type === 'news' ? 'News Article' : 'Book';
+                if (lexileLevelEl) lexileLevelEl.textContent = 'Lexile: ' + (book.lexile_level || 'N/A') + 'L';
+                
+                // Show publish date for news articles
+                if (publishDateEl && book.source_type === 'news' && book.created_at) {
+                    publishDateEl.textContent = 'Published: ' + formatDate(book.created_at);
+                }
+
+                // Initialize favorite button
+                initFavoriteButton(bookId, book.is_saved);
+
+                // Detect chapters vs plain content
+                if (Array.isArray(book.content)) {
+                    chaptersData = book.content;
+                    var startIdx = getChapterFromURL();
+                    if (startIdx === null || startIdx < 0 || startIdx >= chaptersData.length) {
+                        startIdx = book.current_chapter_index || 0;
+                    }
+                    currentChapterIndex = startIdx;
+                    renderChapter(startIdx);
+                    renderTOC();
+                    initChapterNav();
+                } else {
+                    chaptersData = [{ chapter_title: '', content: book.content }];
+                    currentChapterIndex = 0;
+                    renderContent(book.content);
+                    renderTOC();
+                    initChapterNav();
+                }
+                
+                // Initialize progress tracking with saved progress
+                const savedProgress = book.progress || 0;
+                initProgressTracking(savedProgress);
+                
+                // Sync lexile slider with actual article level
+                syncLexileSlider();
+                
+                // Auto-scroll to saved position if there's progress
+                if (savedProgress > 0) {
+                    scrollToProgress(savedProgress);
+                }
+                
+            } catch (error) {
+                console.error('[Reader] Error loading book:', error);
+                const contentEl = getElement('readingContent');
+                var errorMsg = error.name === 'AbortError' ? 'Request timed out. Please try again.' : error.message;
+                if (contentEl) {
+                    contentEl.innerHTML = `
+                        <div class="text-center text-gray-400 py-20">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-red-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <p>Failed to load book content</p>
+                            <p class="text-sm mt-2">Error: ${errorMsg}</p>
+                            <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-teal-500 text-white rounded-lg text-sm font-sans hover:bg-teal-600 transition-colors">Retry</button>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Render content with paragraphs
+        function renderContent(content) {
+            const contentDiv = getElement('readingContent');
+            if (!contentDiv) return;
+            
+            if (content && content.trim()) {
+                storeOriginalContent(content);
+            }
+            
+            const loadingIndicator = getElement('loadingIndicator');
+            if (loadingIndicator) loadingIndicator.remove();
+            
+            if (!content || content.trim().length === 0) {
+                contentDiv.innerHTML = '<div class="text-center text-gray-400 py-20"><p>No content available</p></div>';
+                return;
+            }
+            
+            var paragraphs = content.split('\n\n').filter(function(p) { return p.trim(); });
+            if (paragraphs.length <= 1) {
+                paragraphs = content.split(/\n+/).filter(function(p) { return p.trim(); });
+            }
+            if (paragraphs.length === 0 || (paragraphs.length === 1 && paragraphs[0].trim().length === 0)) {
+                paragraphs = [content];
+            }
+            var html = '';
+            paragraphs.forEach(function(p) {
+                var trimmed = p.trim();
+                if (trimmed) html += '<p class="leading-[2.2] text-slate-800 text-lg">' + trimmed + '</p>';
+            });
+            contentDiv.innerHTML = html || '<p class="leading-[2.2] text-slate-800 text-lg">' + content + '</p>';
+            var preFetchText = content && content.length > 50000 ? content.substring(0, 30000) : content;
+            setTimeout(function() { preFetchChapterWords(preFetchText); }, 500);
+        }
+
+        function renderChapter(idx) {
+            var contentDiv = getElement('readingContent');
+            var chapterTitleEl = document.getElementById('chapterTitle');
+            if (!contentDiv || !chaptersData[idx]) return;
+            currentChapterIndex = idx;
+            var ch = chaptersData[idx];
+            if (chapterTitleEl) chapterTitleEl.textContent = ch.chapter_title || '';
+            storeOriginalContent(ch.content);
+            var loadingIndicator = getElement('loadingIndicator');
+            if (loadingIndicator) loadingIndicator.remove();
+            if (!ch.content || !ch.content.trim()) {
+                contentDiv.innerHTML = '<div class="text-center text-gray-400 py-20"><p>No content available</p></div>';
+                return;
+            }
+            var paragraphs = ch.content.split('\n\n').filter(function(p) { return p.trim(); });
+            if (paragraphs.length <= 1) {
+                paragraphs = ch.content.split(/\n+/).filter(function(p) { return p.trim(); });
+            }
+            if (paragraphs.length === 0 || (paragraphs.length === 1 && paragraphs[0].trim().length === 0)) {
+                paragraphs = [ch.content];
+            }
+            var html = '';
+            paragraphs.forEach(function(p) {
+                var trimmed = p.trim();
+                if (trimmed) html += '<p class="leading-[2.2] text-slate-800 text-lg">' + trimmed + '</p>';
+            });
+            contentDiv.innerHTML = html || '<p class="leading-[2.2] text-slate-800 text-lg">' + ch.content + '</p>';
+            updateChapterNav();
+            updateTOCActive();
+            var mainEl = document.querySelector('main');
+            if (mainEl) mainEl.scrollTop = 0;
+            setTimeout(function() { preFetchChapterWords(ch.content); }, 500);
+        }
+
+        function goToChapter(idx) {
+            if (idx < 0 || idx >= chaptersData.length) return;
+            abortAllCompanionRequests();
+            var mainEl = document.querySelector('main');
+            if (mainEl) mainEl.scrollTop = 0;
+            currentProgress = 0;
+            lastSavedProgress = -1;
+            updateProgressUI(0);
+            renderChapter(idx);
+            reportProgress();
+        }
+
+        function renderTOC() {
+            var tocDiv = document.getElementById('sidebarTOC');
+            var tocList = document.getElementById('tocList');
+            var tocHint = document.getElementById('tocHint');
+            if (!tocDiv || !tocList) return;
+
+            if (chaptersData.length <= 1) {
+                tocList.innerHTML = '';
+                if (tocHint) tocHint.style.display = '';
+                return;
+            }
+
+            if (tocHint) tocHint.style.display = 'none';
+            var pct = Math.round(((currentChapterIndex + 1) / chaptersData.length) * 100);
+            tocList.innerHTML = '<p class="font-sans text-[10px] text-gray-400 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 px-2">' + pct + '% completed</p>';
+            chaptersData.forEach(function(ch, i) {
+                var a = document.createElement('a');
+                a.href = '#';
+                a.className = 'block font-sans text-xs py-1.5 px-2 rounded-lg truncate transition-colors';
+                if (i === currentChapterIndex) {
+                    a.className += ' text-teal-600 font-semibold bg-teal-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+                } else {
+                    a.className += ' text-gray-500 hover:text-gray-700 hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+                }
+                a.textContent = (ch.chapter_title || ('Chapter ' + (i + 1)));
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    goToChapter(i);
+                });
+                tocList.appendChild(a);
+            });
+        }
+
+        function updateTOCActive() {
+            var tocList = document.getElementById('tocList');
+            if (!tocList) return;
+            var items = tocList.querySelectorAll('a');
+            items.forEach(function(a, i) {
+                if (i === currentChapterIndex) {
+                    a.className = 'block font-sans text-xs py-1.5 px-2 rounded-lg truncate transition-colors text-teal-600 font-semibold bg-teal-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+                } else {
+                    a.className = 'block font-sans text-xs py-1.5 px-2 rounded-lg truncate transition-colors text-gray-500 hover:text-gray-700 hover:bg-gray-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300';
+                }
+            });
+        }
+
+        function updateChapterNav() {
+            var navDiv = document.getElementById('chapterNav');
+            var prevBtn = document.getElementById('prevChapterBtn');
+            var nextBtn = document.getElementById('nextChapterBtn');
+            var indicator = document.getElementById('chapterIndicator');
+            if (!navDiv) return;
+            navDiv.classList.remove('hidden');
+            if (chaptersData.length <= 1) {
+                if (prevBtn) prevBtn.style.display = 'none';
+                if (nextBtn) nextBtn.style.display = 'none';
+                if (indicator) indicator.textContent = '';
+            } else {
+                var pct = Math.round(((currentChapterIndex + 1) / chaptersData.length) * 100);
+                if (prevBtn) { prevBtn.style.display = ''; prevBtn.style.visibility = currentChapterIndex === 0 ? 'hidden' : 'visible'; }
+                if (nextBtn) { nextBtn.style.display = ''; nextBtn.style.visibility = currentChapterIndex >= chaptersData.length - 1 ? 'hidden' : 'visible'; }
+                if (indicator) indicator.textContent = (currentChapterIndex + 1) + ' / ' + chaptersData.length + ' \u00B7 ' + pct + '%';
+            }
+        }
+
+        function initChapterNav() {
+            var prevBtn = document.getElementById('prevChapterBtn');
+            var nextBtn = document.getElementById('nextChapterBtn');
+            var completeBtn = document.getElementById('completeBtn');
+            if (prevBtn) prevBtn.addEventListener('click', function() { goToChapter(currentChapterIndex - 1); });
+            if (nextBtn) nextBtn.addEventListener('click', function() { goToChapter(currentChapterIndex + 1); });
+            if (completeBtn) completeBtn.addEventListener('click', function() { markAsCompleted(); });
+            updateChapterNav();
+        }
+
+        function reportProgress() {
+            var bookId = getBookId();
+            if (!bookId) return;
+            var payload;
+            if (chaptersData.length > 1) {
+                payload = { progress: currentProgress, current_chapter_index: currentChapterIndex, total_chapters: chaptersData.length };
+            } else {
+                payload = { progress: currentProgress, total_chapters: 0 };
+            }
+            fetch('/api/library/' + bookId + '/progress', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function(r) { return r.json(); })
+              .then(function(data) { console.log('[Progress] Saved:', data); })
+              .catch(function(err) { console.error('[Progress] Save failed:', err); });
+        }
+
+        function markAsCompleted() {
+            var bookId = getBookId();
+            if (!bookId) return;
+            var payload = { progress: 100, total_chapters: chaptersData.length > 1 ? chaptersData.length : 0 };
+            fetch('/api/library/' + bookId + '/progress', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(function(r) { return r.json(); })
+              .then(function() { showToast('✨ Marked as completed!'); })
+              .catch(function(err) { console.error('[Complete] Error:', err); });
+        }
+
+        // Favorite button
+        var currentBookId = null;
+        var isBookFaved = false;
+
+        function initFavoriteButton(bookId, isSaved) {
+            currentBookId = bookId;
+            isBookFaved = isSaved ? true : false;
+            updateFavoriteButtonUI();
+        }
+
+        function updateFavoriteButtonUI() {
+            var btn = document.getElementById('readerFavBtn');
+            var txt = document.getElementById('readerFavText');
+            var svg = btn ? btn.querySelector('svg') : null;
+            if (!btn) return;
+            if (isBookFaved) {
+                btn.classList.add('fav-active');
+                btn.title = 'Remove from favorites';
+                if (txt) txt.textContent = 'Saved';
+                if (svg) svg.setAttribute('fill', 'currentColor');
+            } else {
+                btn.classList.remove('fav-active');
+                btn.title = 'Add to favorites';
+                if (txt) txt.textContent = 'Save';
+                if (svg) svg.setAttribute('fill', 'none');
+            }
+        }
+
+        function toggleReaderFavorite() {
+            if (!currentBookId) return;
+
+            // Optimistic UI update
+            isBookFaved = !isBookFaved;
+            updateFavoriteButtonUI();
+            showToast(isBookFaved ? 'Added to favorites' : 'Removed from favorites');
+
+            fetch('/api/library/' + currentBookId + '/favorite', { method: 'PUT' })
+                .then(function(res) { return res.json(); })
+                .then(function(d) {
+                    if (d?.code === 0 && d?.data) {
+                        // Sync with server state
+                        isBookFaved = d.data.is_saved;
+                        updateFavoriteButtonUI();
+                    }
+                })
+                .catch(function(err) {
+                    console.error('[Reader] Favorite toggle error:', err);
+                    // Revert on failure
+                    isBookFaved = !isBookFaved;
+                    updateFavoriteButtonUI();
+                    showToast('Failed to update favorite');
+                });
+        }
+
+        let chaptersData = [];
+        let currentChapterIndex = 0;
+
+        // TOC refresh - re-scan book chapters
+        function refreshTOC() {
+            var btn = document.getElementById('tocRefreshBtn');
+            if (btn) {
+                btn.style.animation = 'spin 0.6s linear';
+                btn.disabled = true;
+            }
+
+            if (!currentBookId) {
+                showToast('No book loaded');
+                if (btn) { btn.style.animation = ''; btn.disabled = false; }
+                return;
+            }
+
+            fetch('/api/library/' + currentBookId + '/rechunk', { method: 'POST' })
+                .then(function(res) { return res.json(); })
+                .then(function(d) {
+                    if (d?.code === 0 && d?.data) {
+                        var total = d.data.total_chapters || 0;
+                        showToast(total > 1 ? 'Re-split into ' + total + ' chapters' : 'No chapters detected');
+                        // Reload book content to get new chapters
+                        loadBookContent(currentBookId);
+                    } else {
+                        showToast('Failed to re-scan chapters');
+                    }
+                })
+                .catch(function(err) {
+                    console.error('[Reader] Rechunk error:', err);
+                    showToast('Failed to re-scan chapters');
+                })
+                .finally(function() {
+                    if (btn) { btn.style.animation = ''; btn.disabled = false; }
+                });
+        }
+
+        // ==================== AI Simplify Feature ====================
+        
+        let currentDifficulty = 'original';
+        let currentLexile = 800;
+        let originalContent = '';
+        let isSimplifying = false;
+
+        // Simplify content with AI
+        async function simplifyContent(targetLevel) {
+            if (isSimplifying) return;
+            if (!originalContent || originalContent.trim() === '') {
+                console.error('[Simplify] No original content available');
+                return;
+            }
+            
+            // Use provided target level or current lexile
+            const level = targetLevel || (currentLexile + 'L');
+            
+            try {
+                const response = await fetch('/api/simplify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        content: originalContent,
+                        target_level: level
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to simplify content');
+                }
+                
+                const result = await response.json();
+                
+                if (result.success && result.simplified_content) {
+                    // Show AI badge
+                    document.getElementById('aiBadge').classList.remove('hidden');
+                    document.getElementById('aiTargetLevel').textContent = level;
+                    
+                    // Replace content with fade animation
+                    replaceContentWithAnimation(result.simplified_content);
+                }
+                
+            } catch (error) {
+                console.error('[Simplify] Error:', error);
+                alert('Failed to simplify content. Please try again.');
+            } finally {
+                // Hide loading indicator
+                const loadingIndicator = document.getElementById('difficultyLoading');
+                if (loadingIndicator) {
+                    loadingIndicator.classList.add('hidden');
+                }
+            }
+        }
+
+        // Replace content with fade animation
+        function replaceContentWithAnimation(newContent) {
+            const contentEl = document.getElementById('readingContent');
+            
+            var chapterTitleEl = document.getElementById('chapterTitle');
+            if (chapterTitleEl) chapterTitleEl.textContent = '';
+            
+            contentEl.style.opacity = '0';
+            contentEl.style.transform = 'translateY(10px)';
+            contentEl.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            
+            setTimeout(() => {
+                var paragraphs = newContent.split('\n\n').filter(p => p.trim());
+                if (paragraphs.length <= 1) {
+                    paragraphs = newContent.split(/\n+/).filter(p => p.trim());
+                }
+                
+                if (paragraphs.length === 0 || (paragraphs.length === 1 && paragraphs[0].trim().length === 0)) {
+                    paragraphs = [newContent];
+                }
+                
+                let html = '';
+                paragraphs.forEach(p => {
+                    const trimmed = p.trim();
+                    if (trimmed) {
+                        html += `<p class="leading-[2.2] text-slate-800 text-lg">${trimmed}</p>`;
+                    }
+                });
+                
+                contentEl.innerHTML = html || `<p class="leading-[2.2] text-slate-800 text-lg">${newContent}</p>`;
+                
+                // Fade in new content
+                contentEl.style.opacity = '1';
+                contentEl.style.transform = 'translateY(0)';
+                
+            }, 300);
+        }
+
+        // Store original content when loading book
+        function storeOriginalContent(content) {
+            originalContent = content;
+        }
+
+        // ==================== Reading Progress Feature ====================
+        
+        let currentProgress = 0;
+        let lastSavedProgress = -1;
+        let debounceTimer = null;
+        let debounceDelay = 1000; // 1 second debounce delay
+        let progressThreshold = 3; // Sync when progress changes by this percentage
+        
+        // Calculate reading progress based on scroll position
+        function calculateProgress() {
+            const mainContent = document.querySelector('main');
+            if (!mainContent) return 0;
+            
+            const scrollTop = mainContent.scrollTop;
+            const scrollHeight = mainContent.scrollHeight;
+            const clientHeight = mainContent.clientHeight;
+            
+            if (scrollHeight - clientHeight === 0) return 0;
+            
+            const scrollPercent = (scrollTop / (scrollHeight - clientHeight)) * 100;
+            return Math.round(Math.min(100, Math.max(0, scrollPercent)));
+        }
+        
+        // Update progress UI - top bar
+        function updateProgressUI(progress) {
+            const progressBar = document.getElementById('topProgressBar');
+            
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+        }
+        
+        // Save progress to backend
+        async function saveProgress(progress) {
+            const bookId = getBookId();
+            if (!bookId) return;
+            
+            try {
+                var payload = { progress: progress };
+                if (chaptersData && chaptersData.length > 1) {
+                    payload.current_chapter_index = currentChapterIndex;
+                    payload.total_chapters = chaptersData.length;
+                }
+                const response = await fetch(`/api/library/${bookId}/progress`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    console.log('[Progress] Progress saved:', progress);
+                    lastSavedProgress = progress;
+                } else {
+                    console.error('[Progress] Failed to save progress:', response.status);
+                }
+            } catch (error) {
+                console.error('[Progress] Error saving progress:', error);
+            }
+        }
+        
+        // Debounced progress save
+        function debouncedSaveProgress(progress) {
+            // Cancel previous timer
+            if (debounceTimer) {
+                clearTimeout(debounceTimer);
+            }
+            
+            // Save immediately if progress changed significantly
+            if (Math.abs(progress - lastSavedProgress) >= progressThreshold) {
+                saveProgress(progress);
+                return;
+            }
+            
+            // Otherwise, wait for debounce delay
+            debounceTimer = setTimeout(() => {
+                saveProgress(progress);
+            }, debounceDelay);
+        }
+        
+        // Handle scroll event
+        function handleScroll() {
+            const progress = calculateProgress();
+            
+            if (progress !== currentProgress) {
+                currentProgress = progress;
+                updateProgressUI(progress);
+                debouncedSaveProgress(progress);
+            }
+        }
+        
+        // Initialize progress tracking
+        function initProgressTracking(initialProgress = 0) {
+            const mainContent = document.querySelector('main');
+            if (!mainContent) return;
+            
+            currentProgress = initialProgress;
+            lastSavedProgress = initialProgress;
+            updateProgressUI(initialProgress);
+            
+            // Add scroll event listener
+            mainContent.addEventListener('scroll', handleScroll, { passive: true });
+            
+            console.log('[Progress] Tracking initialized with progress:', initialProgress);
+        }
+        
+        // Scroll to saved position based on progress
+        function scrollToProgress(progress) {
+            const mainContent = document.querySelector('main');
+            if (!mainContent) return;
+            
+            setTimeout(() => {
+                const scrollHeight = mainContent.scrollHeight;
+                const clientHeight = mainContent.clientHeight;
+                const scrollTop = (progress / 100) * (scrollHeight - clientHeight);
+                
+                mainContent.scrollTo({
+                    top: scrollTop,
+                    behavior: 'smooth'
+                });
+                
+                console.log('[Progress] Scrolled to position:', progress);
+            }, 500); // Wait for content to render
+        }
+        
+        // Handle page beforeunload - ensure progress is saved
+        window.addEventListener('beforeunload', function(event) {
+            const bookId = getBookId();
+            if (bookId && currentProgress !== lastSavedProgress) {
+                if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; }
+                var payload = { progress: currentProgress };
+                if (chaptersData && chaptersData.length > 1) {
+                    payload.current_chapter_index = currentChapterIndex;
+                    payload.total_chapters = chaptersData.length;
+                }
+                var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                navigator.sendBeacon('/api/library/' + bookId + '/progress', blob);
+                console.log('[Progress] Final progress saved on unload:', currentProgress);
+            }
+        });
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                const bookId = getBookId();
+                if (bookId && currentProgress !== lastSavedProgress) {
+                    if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; }
+                    var payload = { progress: currentProgress };
+                    if (chaptersData && chaptersData.length > 1) {
+                        payload.current_chapter_index = currentChapterIndex;
+                        payload.total_chapters = chaptersData.length;
+                    }
+                    var blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                    navigator.sendBeacon('/api/library/' + bookId + '/progress', blob);
+                }
+            }
+        });
+
+        // ==================== Tab Switching ====================
+        
+        function switchTab(tabName) {
+            openRightPanel();
+            document.querySelectorAll('[id$="-content"]').forEach(function(el) { el.classList.add('hidden'); });
+            document.querySelectorAll('.tab-btn').forEach(function(el) {
+                el.classList.remove('tab-active', 'text-teal-600');
+                el.classList.add('text-gray-400');
+            });
+            var contentEl = document.getElementById('tab-' + tabName + '-content');
+            if (contentEl) contentEl.classList.remove('hidden');
+            var tabBtn = document.getElementById('tab-' + tabName);
+            if (tabBtn) { tabBtn.classList.add('tab-active', 'text-teal-600'); tabBtn.classList.remove('text-gray-400'); }
+            if (tabName === 'connect') {
+                fetchCompanionGreeting();
+            }
+        }
+
+        // ==================== Right Panel Slide Control ====================
+
+        var panelAutoHideScrollThreshold = 400;
+        var panelScrollLock = false;
+
+        function openRightPanel() {
+            var panel = document.getElementById('rightPanel');
+            var overlay = document.getElementById('panelOverlay');
+            var toggleBtn = document.getElementById('panelToggleBtn');
+            if (panel) panel.classList.add('panel-open');
+            if (overlay) overlay.classList.add('active');
+            if (toggleBtn) toggleBtn.classList.add('hidden');
+        }
+
+        function closeRightPanel() {
+            var panel = document.getElementById('rightPanel');
+            var overlay = document.getElementById('panelOverlay');
+            var toggleBtn = document.getElementById('panelToggleBtn');
+            if (panel) panel.classList.remove('panel-open');
+            if (overlay) overlay.classList.remove('active');
+            updatePanelToggleBtn();
+        }
+
+        function toggleRightPanel() {
+            var panel = document.getElementById('rightPanel');
+            if (!panel) return;
+            if (panel.classList.contains('panel-open')) {
+                closeRightPanel();
+            } else {
+                openRightPanel();
+            }
+        }
+
+        function updatePanelToggleBtn() {
+            var toggleBtn = document.getElementById('panelToggleBtn');
+            if (!toggleBtn) return;
+            if (window.innerWidth >= 1440) {
+                toggleBtn.classList.add('hidden');
+                return;
+            }
+            var panel = document.getElementById('rightPanel');
+            var isPanelOpen = panel && panel.classList.contains('panel-open');
+            toggleBtn.classList.toggle('hidden', isPanelOpen);
+        }
+
+        function initPanelScrollAutoHide() {
+            var mainEl = document.querySelector('main');
+            if (!mainEl) return;
+            mainEl.addEventListener('scroll', function() {
+                if (panelScrollLock) return;
+                var scrollTop = mainEl.scrollTop;
+                if (scrollTop > panelAutoHideScrollThreshold) {
+                    closeRightPanel();
+                }
+            }, { passive: true });
+        }
+
+        function autoOpenPanelForSelection() {
+            var panel = document.getElementById('rightPanel');
+            if (panel && panel.classList.contains('panel-open')) return;
+            openRightPanel();
+            switchTab('understand');
+            panelScrollLock = true;
+            setTimeout(function() { panelScrollLock = false; }, 2000);
+        }
+
+        window.addEventListener('resize', function() { updatePanelToggleBtn(); });
+
+        // ==================== AI Companion Chat ====================
+
+        var chatMessages = [];
+        var isChatBusy = false;
+        var hasReceivedGreeting = false;
+        var chatLastChapterIdx = -1;
+
+        var isFetchingInsights = false;
+        var insightsChapterIdx = -1;
+
+        var chatAbortController = null;
+        var insightsAbortController = null;
+        var typewriterTimer = null;
+
+        function abortAllCompanionRequests() {
+            if (typewriterTimer) {
+                clearTimeout(typewriterTimer);
+                typewriterTimer = null;
+            }
+            if (chatAbortController) {
+                chatAbortController.abort();
+                chatAbortController = null;
+            }
+            if (insightsAbortController) {
+                insightsAbortController.abort();
+                insightsAbortController = null;
+            }
+            isChatBusy = false;
+            isFetchingInsights = false;
+            setChatLoading(false);
+            removeCompanionThinking();
+            removeReplyThinking();
+        }
+
+        function appendChatBubble(role, text) {
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+            removeInitialPlaceholder();
+            var isUser = role === 'user';
+            var div = document.createElement('div');
+            div.className = 'flex ' + (isUser ? 'justify-end' : 'justify-start');
+            var bubble = document.createElement('div');
+            bubble.className = (isUser ? 'chat-bubble-user bg-white border border-gray-200 text-slate-800' : 'chat-bubble-ai bg-teal-50/80 text-slate-700') + ' max-w-[85%] rounded-2xl px-4 py-3 font-serif text-sm leading-relaxed shadow-sm';
+            bubble.textContent = text;
+            if (!isUser) bubble.id = 'aiBubble-' + chatMessages.length;
+            div.appendChild(bubble);
+            container.appendChild(div);
+            chatMessages.push({ role: role, text: text });
+            scrollChatToBottom();
+            return bubble;
+        }
+
+        function removeInitialPlaceholder() {
+            var initialEl = document.getElementById('chatInitialText');
+            if (initialEl && initialEl.parentElement) initialEl.parentElement.remove();
+        }
+
+        function scrollChatToBottom() {
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+            var parent = container.parentElement;
+            if (parent) parent.scrollTop = parent.scrollHeight;
+        }
+
+        function appendChapterDivider() {
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+            removeInitialPlaceholder();
+            var ch = chaptersData[currentChapterIndex];
+            var label = ch ? (ch.chapter_title || 'Chapter ' + (currentChapterIndex + 1)) : 'Chapter ' + (currentChapterIndex + 1);
+            var div = document.createElement('div');
+            div.className = 'flex items-center gap-3 py-2';
+            div.innerHTML = '<div class="flex-1 h-px bg-gray-200"></div><span class="font-sans text-[10px] text-gray-400 font-medium uppercase tracking-wider whitespace-nowrap">' + label + '</span><div class="flex-1 h-px bg-gray-200"></div>';
+            container.appendChild(div);
+            scrollChatToBottom();
+            chatMessages.push({ role: 'divider', text: label });
+        }
+
+        function showCompanionThinking() {
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+            removeInitialPlaceholder();
+            var oldThinking = container.querySelector('.companion-thinking');
+            if (oldThinking) oldThinking.remove();
+            var div = document.createElement('div');
+            div.className = 'companion-thinking thinking-bubble flex justify-start';
+            div.innerHTML = buildThinkingHTML('AI is looking at this chapter...');
+            container.appendChild(div);
+            scrollChatToBottom();
+        }
+
+        function removeCompanionThinking() {
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+            var thinking = container.querySelector('.companion-thinking');
+            if (thinking) thinking.remove();
+        }
+
+        function buildThinkingHTML(label) {
+            return '<div class="thinking-ring bg-teal-50/60 border border-teal-100/80 rounded-2xl px-4 py-3 max-w-[85%]">' +
+                '<div class="flex items-center gap-2.5">' +
+                    '<span class="thinking-dot"></span>' +
+                    '<span class="thinking-dot"></span>' +
+                    '<span class="thinking-dot"></span>' +
+                    '<span class="font-sans text-xs text-teal-600/80 ml-1">' + (label || 'AI is thinking...') + '</span>' +
+                '</div>' +
+            '</div>';
+        }
+
+        function showReplyThinking() {
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+            removeInitialPlaceholder();
+            var oldReplyThinking = container.querySelector('.reply-thinking');
+            if (oldReplyThinking) oldReplyThinking.remove();
+            var div = document.createElement('div');
+            div.className = 'reply-thinking thinking-bubble flex justify-start';
+            div.innerHTML = buildThinkingHTML('AI is replying...');
+            container.appendChild(div);
+            scrollChatToBottom();
+        }
+
+        function removeReplyThinking() {
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+            var thinking = container.querySelector('.reply-thinking');
+            if (thinking) {
+                thinking.style.opacity = '0';
+                thinking.style.transform = 'translateY(-4px)';
+                thinking.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                setTimeout(function() { if (thinking.parentNode) thinking.remove(); }, 200);
+            }
+        }
+
+        function clearChatForNewChapter() {
+            var container = document.getElementById('chatMessages');
+            abortAllCompanionRequests();
+            if (!container) return;
+            chatMessages = [];
+            hasReceivedGreeting = false;
+            container.innerHTML = '';
+            appendChapterDivider();
+            showCompanionThinking();
+        }
+
+        function setChatLoading(loading) {
+            var btn = document.getElementById('chatSendBtn');
+            var input = document.getElementById('chatInput');
+            if (!btn || !input) return;
+            if (loading) {
+                btn.disabled = true;
+                btn.classList.add('opacity-50');
+                input.disabled = true;
+            } else {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+                input.disabled = false;
+                if (document.activeElement === input || document.activeElement === document.body) {
+                    input.focus();
+                }
+            }
+        }
+
+        function typewriterWrite(el, fullText, speed, callback) {
+            var i = 0;
+            el.textContent = '';
+            el.classList.add('typewriter-cursor');
+            function tick() {
+                if (i < fullText.length) {
+                    el.textContent += fullText.charAt(i);
+                    i++;
+                    scrollChatToBottom();
+                    typewriterTimer = setTimeout(tick, speed);
+                } else {
+                    el.classList.remove('typewriter-cursor');
+                    typewriterTimer = null;
+                    if (callback) callback();
+                }
+            }
+            tick();
+        }
+
+        async function sendCompanionMessage() {
+            if (isChatBusy) return;
+            var input = document.getElementById('chatInput');
+            if (!input) return;
+            var text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            isChatBusy = true;
+            setChatLoading(true);
+            appendChatBubble('user', text);
+            showReplyThinking();
+
+            if (chatAbortController) chatAbortController.abort();
+            chatAbortController = new AbortController();
+            var signal = chatAbortController.signal;
+            var requestedChapter = currentChapterIndex;
+
+            try {
+                var bookId = getBookId();
+                var response = await fetch('/api/ai/companion_chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        book_id: parseInt(bookId, 10),
+                        current_chapter_index: currentChapterIndex,
+                        message: text
+                    }),
+                    signal: signal
+                });
+                if (!response.ok) throw new Error('Chat failed');
+                var data = await response.json();
+                if (currentChapterIndex !== requestedChapter) return;
+                var reply = data.reply || '(The companion is thinking...)';
+                removeReplyThinking();
+                var bubble = appendChatBubble('ai', '');
+                typewriterWrite(bubble, reply, 15, function() {
+                    setChatLoading(false);
+                    isChatBusy = false;
+                    if (chatAbortController && chatAbortController.signal === signal) {
+                        chatAbortController = null;
+                    }
+                });
+                var pi = data.paragraph_index;
+                var ta = data.text_anchor || '';
+                if (pi != null && pi >= 0) {
+                    injectAnnotationBubble(pi, reply, ta);
+                }
+            } catch (e) {
+                if (e.name === 'AbortError') return;
+                console.error('[Companion] Error:', e);
+                removeReplyThinking();
+                appendChatBubble('ai', 'Sorry, I had trouble responding. Please try again.');
+                setChatLoading(false);
+                isChatBusy = false;
+                if (chatAbortController && chatAbortController.signal === signal) {
+                    chatAbortController = null;
+                }
+            }
+        }
+
+        function injectAnnotationBubble(paragraphIndex, insightText, textAnchor) {
+            if (paragraphIndex == null || paragraphIndex < 0) return;
+            var contentDiv = document.getElementById('readingContent');
+            if (!contentDiv) return;
+            var paragraphs = contentDiv.querySelectorAll('p');
+            if (paragraphIndex >= paragraphs.length) return;
+            var targetP = paragraphs[paragraphIndex];
+
+            var anchorKey = textAnchor || ('_para_' + paragraphIndex);
+
+            var existingTriggers = targetP.querySelectorAll('.ai-annotation-trigger');
+            for (var et = 0; et < existingTriggers.length; et++) {
+                if (existingTriggers[et].getAttribute('data-anchor') === anchorKey) {
+                    if (insightText) existingTriggers[et].setAttribute('data-insight', insightText);
+                    return;
+                }
+            }
+
+            var sparkle = document.createElement('span');
+            sparkle.className = 'ai-annotation-trigger';
+            sparkle.textContent = '\u2728';
+            sparkle.title = 'AI has thoughts on this paragraph';
+            if (insightText) sparkle.setAttribute('data-insight', insightText);
+            sparkle.setAttribute('data-anchor', anchorKey);
+            sparkle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                toggleAnnotationPopover(sparkle);
+            });
+
+            if (textAnchor && textAnchor.length >= 5) {
+                var inserted = _insertSparkleAtTextAnchor(targetP, sparkle, textAnchor);
+                if (inserted) return;
+            }
+
+            targetP.appendChild(sparkle);
+        }
+
+        function _insertSparkleAtTextAnchor(targetP, sparkle, textAnchor) {
+            var walker = document.createTreeWalker(targetP, NodeFilter.SHOW_TEXT, { acceptNode: function(n) { return n.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP; } }, false);
+            var textNodes = [];
+            while (walker.nextNode()) {
+                textNodes.push(walker.currentNode);
+            }
+            if (textNodes.length === 0) return false;
+
+            var searchRaw = textAnchor.trim();
+
+            var fullText = '';
+            var nodeOffsets = [];
+            for (var i = 0; i < textNodes.length; i++) {
+                nodeOffsets.push(fullText.length);
+                fullText += textNodes[i].textContent;
+            }
+
+            var matchEnd = fullText.indexOf(searchRaw);
+            if (matchEnd !== -1) {
+                matchEnd += searchRaw.length;
+            }
+
+            if (matchEnd === -1) {
+                var normalizedSearch = searchRaw.replace(/\s+/g, ' ').trim();
+                var normalizedFull = fullText.replace(/\s+/g, ' ').trim();
+
+                var normIdx = normalizedFull.indexOf(normalizedSearch);
+                if (normIdx === -1 && normalizedSearch.length > 12) {
+                    var shorter = normalizedSearch.substring(0, Math.floor(normalizedSearch.length * 0.65));
+                    normIdx = normalizedFull.indexOf(shorter);
+                }
+                if (normIdx === -1) return false;
+
+                var normEnd = normIdx + normalizedSearch.length;
+
+                var map = [];
+                var prevWasSpace = true;
+                for (var j = 0; j < fullText.length; j++) {
+                    var isSpace = fullText[j] === ' ' || fullText[j] === '\n' || fullText[j] === '\t' || fullText[j] === '\r';
+                    if (!isSpace) {
+                        map.push(j);
+                        prevWasSpace = false;
+                    } else if (!prevWasSpace) {
+                        map.push(j);
+                        prevWasSpace = true;
+                    }
+                }
+
+                if (normEnd < map.length) {
+                    matchEnd = map[normEnd];
+                    if (matchEnd < fullText.length) matchEnd++;
+                } else {
+                    matchEnd = fullText.length;
+                }
+            }
+
+            if (matchEnd <= 0) return false;
+
+            var targetNode = textNodes[0];
+            var splitOffset = 0;
+            for (var k = 0; k < textNodes.length; k++) {
+                var nodeStart = nodeOffsets[k];
+                var nodeEnd = nodeStart + textNodes[k].textContent.length;
+                if (matchEnd > nodeStart && matchEnd <= nodeEnd) {
+                    targetNode = textNodes[k];
+                    splitOffset = matchEnd - nodeStart;
+                    break;
+                }
+                if (matchEnd <= nodeStart && k > 0) {
+                    targetNode = textNodes[k - 1];
+                    splitOffset = targetNode.textContent.length;
+                    break;
+                }
+            }
+
+            if (splitOffset > 0 && splitOffset <= targetNode.textContent.length) {
+                var afterText = targetNode.splitText(splitOffset);
+                targetNode.parentNode.insertBefore(sparkle, afterText);
+                return true;
+            }
+
+            return false;
+        }
+
+        var activePopover = null;
+
+        function toggleAnnotationPopover(sparkle) {
+            if (activePopover && activePopover.sparkle === sparkle) {
+                dismissAnnotationPopover();
+                return;
+            }
+            dismissAnnotationPopover();
+            showAnnotationPopover(sparkle);
+        }
+
+        function showAnnotationPopover(sparkle) {
+            var insightText = sparkle.getAttribute('data-insight');
+            if (!insightText) return;
+
+            var popover = document.createElement('div');
+            popover.className = 'ai-popover';
+            popover.innerHTML = '<div class="ai-popover-header">' +
+                '<div class="ai-popover-icon"><span>&#x2728;</span></div>' +
+                '<span class="ai-popover-label">AI Insight</span>' +
+                '<span class="ai-popover-close" onclick="dismissAnnotationPopover()">&times;</span>' +
+            '</div>' +
+            '<div class="ai-popover-body">' + escapePopoverText(insightText) + '</div>';
+
+            document.body.appendChild(popover);
+
+            var sparkleRect = sparkle.getBoundingClientRect();
+            var scrollX = window.scrollX || window.pageXOffset;
+            var scrollY = window.scrollY || window.pageYOffset;
+
+            var popoverWidth = popover.offsetWidth || 320;
+            var popoverHeight = popover.offsetHeight || 120;
+
+            var left = sparkleRect.left + scrollX + (sparkleRect.width / 2) - (popoverWidth / 2);
+            left = Math.max(12, Math.min(left, (window.innerWidth + scrollX) - popoverWidth - 12));
+
+            var spaceAbove = sparkleRect.top;
+            var spaceBelow = window.innerHeight - sparkleRect.bottom - 20;
+            var showBelow = spaceBelow > popoverHeight + 30 || spaceBelow > spaceAbove;
+
+            if (showBelow) {
+                popover.style.top = (sparkleRect.bottom + scrollY + 10) + 'px';
+                popover.classList.add('arrow-top');
+            } else {
+                popover.style.top = (sparkleRect.top + scrollY - popoverHeight - 10) + 'px';
+                popover.classList.add('arrow-bottom');
+            }
+            popover.style.left = left + 'px';
+
+            activePopover = { el: popover, sparkle: sparkle };
+        }
+
+        function dismissAnnotationPopover() {
+            if (!activePopover) return;
+            if (activePopover.el && activePopover.el.parentNode) {
+                activePopover.el.parentNode.removeChild(activePopover.el);
+            }
+            activePopover = null;
+        }
+
+        function escapePopoverText(text) {
+            if (!text) return '';
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        document.addEventListener('click', function(e) {
+            if (!activePopover) return;
+            if (activePopover.el && activePopover.el.contains(e.target)) return;
+            if (e.target.closest && e.target.closest('.ai-annotation-trigger')) return;
+            dismissAnnotationPopover();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') dismissAnnotationPopover();
+        });
+
+        async function fetchChapterInsights() {
+            if (isFetchingInsights) return;
+            if (insightsChapterIdx === currentChapterIndex) return;
+
+            var bookId = getBookId();
+            if (!bookId) return;
+
+            isFetchingInsights = true;
+            insightsChapterIdx = currentChapterIndex;
+
+            if (insightsAbortController) insightsAbortController.abort();
+            insightsAbortController = new AbortController();
+            var signal = insightsAbortController.signal;
+            var requestedChapter = currentChapterIndex;
+
+            try {
+                var response = await fetch('/api/ai/chapter_insights', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        book_id: parseInt(bookId, 10),
+                        chapter_index: requestedChapter
+                    }),
+                    signal: signal
+                });
+                if (!response.ok) throw new Error('Insights fetch failed');
+                var data = await response.json();
+                if (currentChapterIndex !== requestedChapter) return;
+                var insights = data.insights || [];
+                insights.forEach(function(item) {
+                    injectAnnotationBubble(item.paragraph_index, item.insight, item.text_anchor);
+                });
+            } catch (e) {
+                if (e.name === 'AbortError') return;
+                console.error('[ChapterInsights] Error:', e);
+            } finally {
+                if (insightsAbortController && insightsAbortController.signal === signal) {
+                    insightsAbortController = null;
+                }
+                isFetchingInsights = false;
+            }
+        }
+
+        async function fetchCompanionGreeting() {
+            if (isChatBusy) return;
+            var container = document.getElementById('chatMessages');
+            if (!container) return;
+
+            if (chatLastChapterIdx !== currentChapterIndex) {
+                chatLastChapterIdx = currentChapterIndex;
+                clearChatForNewChapter();
+            }
+
+            if (hasReceivedGreeting) return;
+            isChatBusy = true;
+            setChatLoading(true);
+
+            if (chatAbortController) chatAbortController.abort();
+            chatAbortController = new AbortController();
+            var signal = chatAbortController.signal;
+            var requestedChapter = currentChapterIndex;
+
+            try {
+                var bookId = getBookId();
+                var ch = chaptersData[currentChapterIndex];
+                var chTitle = ch ? (ch.chapter_title || 'Chapter ' + (currentChapterIndex + 1)) : 'Chapter ' + (currentChapterIndex + 1);
+                var response = await fetch('/api/ai/companion_chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        book_id: parseInt(bookId, 10),
+                        current_chapter_index: currentChapterIndex,
+                        message: 'I just turned the page to "' + chTitle + '". Greet me warmly like a reading companion. Share ONE interesting observation, hint, or piece of foreshadowing from this chapter or previous chapters. Encourage me with curiosity. Keep it under 4 sentences, warm and personal tone.'
+                    }),
+                    signal: signal
+                });
+                if (!response.ok) throw new Error('Greeting failed');
+                var data = await response.json();
+                if (currentChapterIndex !== requestedChapter) return;
+                var reply = data.reply || '';
+                var greetingPi = data.paragraph_index;
+                var greetingTa = data.text_anchor || '';
+                if (greetingPi != null && greetingPi >= 0) {
+                    injectAnnotationBubble(greetingPi, reply, greetingTa);
+                }
+                removeCompanionThinking();
+                if (reply) {
+                    var bubble = appendChatBubble('ai', '');
+                    typewriterWrite(bubble, reply, 15, function() {
+                        setChatLoading(false);
+                        isChatBusy = false;
+                        hasReceivedGreeting = true;
+                        if (chatAbortController && chatAbortController.signal === signal) {
+                            chatAbortController = null;
+                        }
+                    });
+                } else {
+                    setChatLoading(false);
+                    isChatBusy = false;
+                    if (chatAbortController && chatAbortController.signal === signal) {
+                        chatAbortController = null;
+                    }
+                }
+            } catch (e) {
+                if (e.name === 'AbortError') return;
+                console.error('[Companion] Greeting error:', e);
+                removeCompanionThinking();
+                setChatLoading(false);
+                isChatBusy = false;
+                if (chatAbortController && chatAbortController.signal === signal) {
+                    chatAbortController = null;
+                }
+            }
+        }
+
+        var chatInput = document.getElementById('chatInput');
+        if (chatInput) {
+            chatInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendCompanionMessage();
+                }
+            });
+        }
+
+        // ==================== Summary Feature ====================
+
+        let isSummaryFetching = false;
+
+        async function fetchSummary() {
+            if (isSummaryFetching) return;
+            if (!originalContent || !originalContent.trim()) return;
+
+            isSummaryFetching = true;
+
+            var initial = document.getElementById('summaryInitial');
+            var loading = document.getElementById('summaryLoading');
+            var result = document.getElementById('summaryResult');
+
+            if (initial) initial.classList.add('hidden');
+            if (result) { result.classList.add('hidden'); result.style.opacity = '0'; }
+            if (loading) loading.classList.remove('hidden');
+
+            try {
+                var response = await fetch('/api/summary', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: originalContent })
+                });
+
+                if (!response.ok) throw new Error('Failed to generate summary');
+
+                var data = await response.json();
+
+                if (loading) loading.classList.add('hidden');
+
+                var el = document.getElementById('summaryOneSentence');
+                if (el) el.textContent = data.one_sentence_summary || '';
+
+                var takeList = document.getElementById('summaryTakeaways');
+                if (takeList) {
+                    takeList.innerHTML = '';
+                    (data.key_takeaways || []).forEach(function(item) {
+                        var li = document.createElement('li');
+                        li.className = 'flex items-start gap-2.5';
+                        var dot = document.createElement('span');
+                        dot.className = 'w-1.5 h-1.5 rounded-full bg-teal-500 flex-shrink-0 mt-[0.4rem]';
+                        var text = document.createElement('span');
+                        text.className = 'font-sans text-sm text-slate-600 leading-relaxed';
+                        text.textContent = item;
+                        li.appendChild(dot);
+                        li.appendChild(text);
+                        if (takeList) takeList.appendChild(li);
+                    });
+                }
+
+                var focusEl = document.getElementById('summaryFocusText');
+                if (focusEl) focusEl.textContent = data.reading_focus || '';
+
+                if (result) {
+                    result.classList.remove('hidden');
+                    requestAnimationFrame(function() {
+                        result.style.opacity = '1';
+                        result.style.transition = 'opacity 400ms ease';
+                    });
+                }
+            } catch (error) {
+                console.error('[Summary] Error:', error);
+                if (loading) loading.classList.add('hidden');
+                if (initial) initial.classList.remove('hidden');
+                showToast('Failed to generate summary');
+            } finally {
+                isSummaryFetching = false;
+            }
+        }
+
+        function closeSummary() {
+            var result = document.getElementById('summaryResult');
+            var initial = document.getElementById('summaryInitial');
+            if (result) result.classList.add('hidden');
+            if (initial) initial.classList.remove('hidden');
+        }
+
+        // ==================== Difficulty Adjustment ====================
+
+        let originalLexile = 800;
+        let lexileSliderInitialized = false;
+
+        function syncLexileSlider() {
+            const slider = document.getElementById('lexileSlider');
+            const display = document.getElementById('currentLexile');
+            const rewriteBtn = document.getElementById('rewriteBtn');
+            if (!slider || !display) return;
+
+            const lexileEl = document.getElementById('lexileLevel');
+            if (lexileEl) {
+                const match = lexileEl.textContent.match(/\d+/);
+                if (match) {
+                    originalLexile = parseInt(match[0], 10);
+                    slider.value = originalLexile;
+                    display.textContent = originalLexile + 'L';
+                    if (rewriteBtn) rewriteBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        function initLexileSlider() {
+            const slider = document.getElementById('lexileSlider');
+            const display = document.getElementById('currentLexile');
+            const rewriteBtn = document.getElementById('rewriteBtn');
+            const rewriteTarget = document.getElementById('rewriteTarget');
+            const loading = document.getElementById('difficultyLoading');
+
+            if (!slider || !display) return;
+
+            if (lexileSliderInitialized) return;
+            lexileSliderInitialized = true;
+
+            syncLexileSlider();
+
+            slider.addEventListener('input', function() {
+                const val = parseInt(slider.value, 10);
+                display.textContent = val + 'L';
+                if (rewriteTarget) rewriteTarget.textContent = val;
+                if (val === originalLexile) {
+                    if (rewriteBtn) rewriteBtn.classList.add('hidden');
+                } else {
+                    if (rewriteBtn) rewriteBtn.classList.remove('hidden');
+                }
+            });
+
+            if (rewriteBtn) {
+                rewriteBtn.addEventListener('click', function() {
+                    const targetLevel = parseInt(slider.value, 10) + 'L';
+                    if (loading) loading.classList.remove('hidden');
+                    rewriteBtn.classList.add('hidden');
+                    simplifyContent(targetLevel);
+                });
+            }
+        }
+
+        // ==================== Word & Sentence Selection / Highlight Feature ====================
+
+        let isProcessingSelection = false;
+        let preTransCache = {};
+        let preTransInFlight = false;
+
+        const STOP_WORDS = new Set([
+            'a','an','the','is','are','was','were','be','been','being',
+            'have','has','had','do','does','did','will','would','could','should','may','might','must','shall','can',
+            'i','you','he','she','it','we','they','me','him','her','us','them',
+            'my','your','his','its','our','their','mine','yours','hers','ours','theirs',
+            'this','that','these','those','what','which','who','whom','whose',
+            'and','or','but','not','so','if','as','at','by','for','in','of','on','to','up','with',
+            'from','all','any','each','every','no','some','both','few','more','most','other','such','only',
+            'than','too','very','just','also','now','then','here','there','when','where','why','how',
+            'one','two','three','first','second','last','new','old','big','small','long','short','own','same','right','left',
+            'about','into','over','after','before','between','under','again','further','once','well',
+            'like','much','many','little','even','back','still','already','yet','while','because','though','until',
+        ]);
+
+        function extractUniqueWords(text) {
+            if (!text) return [];
+            var words = text.match(/\b[a-zA-Z]{2,}\b/g) || [];
+            var seen = {};
+            var result = [];
+            for (var i = 0; i < words.length; i++) {
+                var w = words[i].toLowerCase();
+                if (!STOP_WORDS.has(w) && !seen[w]) {
+                    seen[w] = true;
+                    result.push(w);
+                }
+            }
+            return result;
+        }
+
+        async function preFetchChapterWords(text) {
+            if (preTransInFlight || !text) return;
+            var words = extractUniqueWords(text);
+            if (words.length === 0) return;
+            if (words.length > 80) words = words.slice(0, 80);
+            preTransInFlight = true;
+            try {
+                var res = await fetch('/api/translate-batch', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({words: words})
+                });
+                if (res.ok) {
+                    var data = await res.json();
+                    for (var k in data) {
+                        if (data.hasOwnProperty(k)) preTransCache[k] = data[k];
+                    }
+                }
+            } catch (e) {
+                console.warn('[PreTrans] Batch fetch failed:', e);
+            } finally {
+                preTransInFlight = false;
+            }
+        }
+
+        function clearAllHighlights() {
+            document.querySelectorAll('.persistent-highlight').forEach(function(el) {
+                var parent = el.parentNode;
+                if (parent) {
+                    parent.replaceChild(document.createTextNode(el.textContent), el);
+                    parent.normalize();
+                }
+            });
+        }
+
+        function resetRightPanel() {
+            var getEl = function(id) { return document.getElementById(id); };
+            var empty = getEl('mindmapEmpty');
+            var loading = getEl('mindmapLoading');
+            var content = getEl('mindmapContent');
+            var error = getEl('mindmapError');
+            var sentenceContent = getEl('sentenceContent');
+            var sentenceLoading = getEl('sentenceLoading');
+            var sentenceError = getEl('sentenceError');
+            if (loading) loading.classList.add('hidden');
+            if (content) content.classList.add('hidden');
+            if (error) error.classList.add('hidden');
+            if (sentenceContent) sentenceContent.classList.add('hidden');
+            if (sentenceLoading) sentenceLoading.classList.add('hidden');
+            if (sentenceError) sentenceError.classList.add('hidden');
+            if (empty) empty.classList.remove('hidden');
+            var understandTabEl = document.getElementById('understandTab');
+            if (understandTabEl) understandTabEl.textContent = 'Word Decoder';
+        }
+
+        function showSkeleton() {
+            var getEl = function(id) { return document.getElementById(id); };
+            var empty = getEl('mindmapEmpty');
+            var loading = getEl('mindmapLoading');
+            var content = getEl('mindmapContent');
+            var error = getEl('mindmapError');
+            var sentenceContent = getEl('sentenceContent');
+            var sentenceLoading = getEl('sentenceLoading');
+            var sentenceError = getEl('sentenceError');
+            if (empty) empty.classList.add('hidden');
+            if (content) content.classList.add('hidden');
+            if (error) error.classList.add('hidden');
+            if (sentenceContent) sentenceContent.classList.add('hidden');
+            if (sentenceLoading) sentenceLoading.classList.add('hidden');
+            if (sentenceError) sentenceError.classList.add('hidden');
+            if (loading) loading.classList.remove('hidden');
+        }
+
+        function wrapSelectionWithHighlight(highlightClass) {
+            var selection = window.getSelection();
+            if (!selection || !selection.rangeCount) return null;
+            try {
+                var range = selection.getRangeAt(0);
+                var span = document.createElement('span');
+                span.className = 'persistent-highlight ' + highlightClass + ' cursor-pointer';
+                range.surroundContents(span);
+                window.getSelection()?.removeAllRanges();
+                span.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    clearAllHighlights();
+                    resetRightPanel();
+                });
+                return span;
+            } catch (e) {
+                console.warn('[Selection] Could not surround (cross-element), skipping highlight');
+                return null;
+            }
+        }
+
+        async function handleSelection() {
+            var selection = window.getSelection();
+            var selectedText = selection?.toString() ?? '';
+
+            if (!selectedText || !selectedText.trim()) return;
+
+            selectedText = selectedText.replace(/^[^\w]+|[^\w]+$/g, '').trim();
+            if (!selectedText) return;
+
+            var wordCount = selectedText.split(/\s+/).length;
+
+            if (wordCount > 50) {
+                window.getSelection()?.removeAllRanges();
+                showToast('\u26A0\uFE0F Selected text is too long. Please select a shorter passage to analyze.');
+                return;
+            }
+
+            if (isProcessingSelection) return;
+            isProcessingSelection = true;
+
+            clearAllHighlights();
+
+            var isWordMode = wordCount <= 3;
+
+            autoOpenPanelForSelection();
+
+            wrapSelectionWithHighlight(isWordMode ? 'bg-teal-100/60 rounded px-1' : 'bg-yellow-200/50 rounded-sm');
+
+            if (!isWordMode) {
+                try {
+                    await fetchSentenceAnalysis(selectedText);
+                } catch (e) {
+                    console.error('[Sentence] Panel update failed:', e);
+                } finally {
+                    isProcessingSelection = false;
+                }
+                return;
+            }
+
+            switchTab('understand');
+            showSkeleton();
+
+            var wordLower = selectedText.toLowerCase();
+            var cachedTrans = preTransCache[wordLower];
+
+            try {
+                var _translationData, _mindmapData;
+                var _transPromise, _mindmapPromise;
+
+                if (cachedTrans && cachedTrans.translation) {
+                    _translationData = cachedTrans;
+                    _mindmapPromise = fetch('/api/mindmap', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ word: selectedText })
+                    });
+                } else {
+                    _transPromise = fetch('/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ word: selectedText })
+                    });
+                    _mindmapPromise = fetch('/api/mindmap', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ word: selectedText })
+                    });
+                    var _transRes = await _transPromise;
+                    _translationData = await _transRes.json();
+                    if (_translationData && _translationData.translation) {
+                        preTransCache[wordLower] = _translationData;
+                    }
+                }
+
+                var _mindmapRes = await _mindmapPromise;
+                _mindmapData = await _mindmapRes.json();
+
+                renderMindmap(selectedText, _translationData?.translation ?? '', _mindmapData);
+            } catch (_error) {
+                console.error('[Mindmap] Error:', _error);
+                var _getEl = function(id) { return document.getElementById(id); };
+                var _loading = _getEl('mindmapLoading');
+                var _errorEl = _getEl('mindmapError');
+                var _errorMsg = _getEl('mindmapErrorMessage');
+                if (_loading) _loading.classList.add('hidden');
+                if (_errorMsg) _errorMsg.textContent = 'Failed to load. Please try again.';
+                if (_errorEl) _errorEl.classList.remove('hidden');
+            } finally {
+                isProcessingSelection = false;
+            }
+        }
+        
+        function renderMindmap(word, translation, data) {
+            const getEl = (id) => document.getElementById(id);
+
+            const loading = getEl('mindmapLoading');
+            const content = getEl('mindmapContent');
+            const error = getEl('mindmapError');
+            const sentenceContent = getEl('sentenceContent');
+
+            if (sentenceContent) sentenceContent.classList.add('hidden');
+            if (error) error.classList.add('hidden');
+
+            if (!data || data._error) {
+                if (loading) loading.classList.add('hidden');
+                const errorMsg = getEl('mindmapErrorMessage');
+                if (errorMsg) errorMsg.textContent = data?._error || 'Failed to load word details.';
+                if (error) error.classList.remove('hidden');
+                return;
+            }
+
+            const wordEl = getEl('mindmapWord');
+            const transEl = getEl('mindmapTranslation');
+            if (wordEl) wordEl.textContent = word;
+            if (transEl) transEl.textContent = translation || data.translation || '';
+
+            const etySection = getEl('etymologySection');
+            const etyDiv = getEl('mindmapEtymology');
+            if (data.etymology?.trim()) {
+                if (etyDiv) etyDiv.textContent = data.etymology;
+                if (etySection) etySection.classList.remove('hidden');
+            } else {
+                if (etySection) etySection.classList.add('hidden');
+            }
+
+            const synSection = getEl('synonymsSection');
+            const synContainer = getEl('mindmapSynonyms');
+            if (synContainer) synContainer.innerHTML = '';
+            if (data.synonyms?.length > 0) {
+                data.synonyms.forEach(function(s) {
+                    const tag = document.createElement('span');
+                    tag.className = 'bg-slate-50 text-slate-700 rounded-full px-3 py-1 text-sm border border-slate-100';
+                    tag.textContent = s;
+                    if (synContainer) synContainer.appendChild(tag);
+                });
+                if (synSection) synSection.classList.remove('hidden');
+            } else {
+                if (synSection) synSection.classList.add('hidden');
+            }
+
+            const antSection = getEl('antonymsSection');
+            const antContainer = getEl('mindmapAntonyms');
+            if (antContainer) antContainer.innerHTML = '';
+            if (data.antonyms?.length > 0) {
+                data.antonyms.forEach(function(a) {
+                    const tag = document.createElement('span');
+                    tag.className = 'bg-slate-50 text-slate-700 rounded-full px-3 py-1 text-sm border border-slate-100';
+                    tag.textContent = a;
+                    if (antContainer) antContainer.appendChild(tag);
+                });
+                if (antSection) antSection.classList.remove('hidden');
+            } else {
+                if (antSection) antSection.classList.add('hidden');
+            }
+
+            const colSection = getEl('collocationsSection');
+            const colContainer = getEl('mindmapCollocations');
+            if (colContainer) colContainer.innerHTML = '';
+            if (data.collocations?.length > 0) {
+                data.collocations.forEach(function(c) {
+                    const tag = document.createElement('span');
+                    tag.className = 'bg-slate-50 text-slate-700 rounded-full px-3 py-1 text-sm border border-slate-100';
+                    tag.textContent = c;
+                    if (colContainer) colContainer.appendChild(tag);
+                });
+                if (colSection) colSection.classList.remove('hidden');
+            } else {
+                if (colSection) colSection.classList.add('hidden');
+            }
+
+            setupSaveButton('mindmapSaveBtn', word, translation || data.translation || '', 'word');
+
+            if (loading) loading.classList.add('hidden');
+            if (content) content.classList.remove('hidden');
+        }
+
+        function setupSaveButton(btnId, text, translation, itemType) {
+            const btn = document.getElementById(btnId);
+            if (!btn) return;
+            btn.dataset.text = text;
+            btn.dataset.translation = translation;
+            btn.dataset.itemType = itemType;
+            btn.onclick = null;
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                handleVocabularySave(btn);
+            });
+        }
+
+        function handleVocabularySave(btn) {
+            var text = btn.dataset.text;
+            var translation = btn.dataset.translation;
+            var itemType = btn.dataset.itemType || 'word';
+            if (!text) return;
+
+            var bookTitleEl = document.getElementById('bookTitle');
+            var chapterTitleEl = document.getElementById('chapterTitle');
+            var bookTitle = bookTitleEl ? bookTitleEl.textContent.trim() : '';
+            var chapterTitle = chapterTitleEl ? chapterTitleEl.textContent.trim() : '';
+
+            var svg = btn.querySelector('svg');
+            if (svg) {
+                svg.setAttribute('fill', '#EF4444');
+                svg.setAttribute('stroke', '#EF4444');
+            }
+            btn.classList.add('scale-110');
+            setTimeout(function() { btn.classList.remove('scale-110'); }, 200);
+
+            fetch('/api/vocabulary', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    text: text,
+                    translation: translation || '',
+                    context: '',
+                    item_type: itemType,
+                    book_title: bookTitle,
+                    chapter_title: chapterTitle
+                })
+            }).then(function(r) {
+                return r.json();
+            }).then(function(data) {
+                if (data && data.message) {
+                    showToast('✨ Saved to Vocabulary');
+                } else {
+                    showToast('Failed to save');
+                }
+            }).catch(function() {
+                showToast('Failed to save');
+            });
+        }
+        
+        // Fetch sentence analysis and update Understand tab
+        async function fetchSentenceAnalysis(sentence) {
+            console.log('[Sentence Analysis] Analyzing:', sentence);
+            
+            // Helper function to safely get element
+            const getEl = (id) => {
+                const el = document.getElementById(id);
+                if (!el) console.warn('[Sentence Analysis] Element not found:', id);
+                return el;
+            };
+            
+            // Helper function to show error state
+            const showError = (message) => {
+                const sentenceLoading = getEl('sentenceLoading');
+                const sentenceContent = getEl('sentenceContent');
+                const sentenceError = getEl('sentenceError');
+                const sentenceErrorMsg = getEl('sentenceErrorMessage');
+                
+                if (sentenceLoading) sentenceLoading.classList.add('hidden');
+                if (sentenceContent) sentenceContent.classList.add('hidden');
+                if (sentenceErrorMsg) sentenceErrorMsg.textContent = message;
+                if (sentenceError) sentenceError.classList.remove('hidden');
+            };
+            
+            try {
+                // Switch to understand tab
+                switchTab('understand');
+                
+                // Update panel title with null check
+                const understandTabEl = getEl('understandTab');
+                if (understandTabEl) understandTabEl.textContent = 'Sentence Analysis';
+                
+                // Show loading state with null checks
+                const mindmapEmpty = getEl('mindmapEmpty');
+                const mindmapContent = getEl('mindmapContent');
+                const sentenceContent = getEl('sentenceContent');
+                const sentenceLoading = getEl('sentenceLoading');
+                const sentenceError = getEl('sentenceError');
+                
+                if (mindmapEmpty) mindmapEmpty.classList.add('hidden');
+                if (mindmapContent) mindmapContent.classList.add('hidden');
+                if (sentenceContent) sentenceContent.classList.add('hidden');
+                if (sentenceError) sentenceError.classList.add('hidden');
+                if (sentenceLoading) sentenceLoading.classList.remove('hidden');
+                
+                // Fetch sentence analysis data with timeout
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 15000);
+                
+                const response = await fetch('/api/analyze-sentence', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ sentence: sentence }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeout);
+                
+                // Check HTTP status
+                if (!response.ok) {
+                    const status = response.status;
+                    console.error('[Sentence Analysis] HTTP Error:', status);
+                    if (status === 404) {
+                        showError('API endpoint not found. Please check backend server.');
+                    } else if (status === 500) {
+                        showError('Server error. Please try again later.');
+                    } else {
+                        showError('Failed to analyze sentence. Status: ' + status);
+                    }
+                    return;
+                }
+                
+                // Parse JSON response
+                let analysisData;
+                try {
+                    analysisData = await response.json();
+                } catch (jsonError) {
+                    console.error('[Sentence Analysis] JSON parse error:', jsonError);
+                    showError('Invalid response from server.');
+                    return;
+                }
+                
+                if (!analysisData) {
+                    showError('No data received from server.');
+                    return;
+                }
+                
+                // Update translation
+                const translationText = getEl('translationText');
+                if (translationText) translationText.textContent = analysisData.translation || 'N/A';
+
+                const grammar = analysisData.grammar_breakdown || {};
+                const grammarSubjectEl = getEl('grammarSubject');
+                const grammarVerbEl = getEl('grammarVerb');
+                const grammarObjectEl = getEl('grammarObject');
+                const grammarTenseEl = getEl('grammarTense');
+                if (grammarSubjectEl) grammarSubjectEl.textContent = grammar.subject || '';
+                if (grammarVerbEl) grammarVerbEl.textContent = grammar.verb || '';
+                if (grammarObjectEl) grammarObjectEl.textContent = grammar.object || '';
+                if (grammarTenseEl) grammarTenseEl.textContent = grammar.tense_and_clause || '';
+
+                const keyPhrasesCard = getEl('keyPhrasesCard');
+                const keyPhrasesList = getEl('keyPhrasesList');
+                if (keyPhrasesList) keyPhrasesList.innerHTML = '';
+
+                if (analysisData.key_phrases && analysisData.key_phrases.length > 0) {
+                    analysisData.key_phrases.forEach(function(item) {
+                        const row = document.createElement('div');
+                        row.className = 'flex flex-col gap-0.5';
+                        const phraseTag = document.createElement('span');
+                        phraseTag.className = 'inline-block bg-slate-50 text-slate-700 rounded-full px-3 py-1 text-sm border border-slate-100 w-fit';
+                        phraseTag.textContent = item.phrase || '';
+                        const meaningEl = document.createElement('span');
+                        meaningEl.className = 'text-xs text-slate-400 font-sans pl-1';
+                        meaningEl.textContent = item.meaning || '';
+                        row.appendChild(phraseTag);
+                        row.appendChild(meaningEl);
+                        if (keyPhrasesList) keyPhrasesList.appendChild(row);
+                    });
+                    if (keyPhrasesCard) keyPhrasesCard.classList.remove('hidden');
+                } else {
+                    if (keyPhrasesCard) keyPhrasesCard.classList.add('hidden');
+                }
+
+                const aiTipCard = getEl('aiTipCard');
+                const aiTipText = getEl('aiTipText');
+                if (aiTipText) aiTipText.textContent = analysisData.ai_tip || '';
+                if (aiTipCard) {
+                    if (analysisData.ai_tip && analysisData.ai_tip.trim()) {
+                        aiTipCard.classList.remove('hidden');
+                    } else {
+                        aiTipCard.classList.add('hidden');
+                    }
+                }
+
+                setupSaveButton('sentenceSaveBtn', sentence, analysisData.translation || '', 'sentence');
+
+                if (sentenceLoading) sentenceLoading.classList.add('hidden');
+                if (sentenceContent) sentenceContent.classList.remove('hidden');
+            } catch (error) {
+                console.error('[Sentence Analysis] Error:', error);
+                if (error.name === 'AbortError') {
+                    showError('Request timed out. Please try again.');
+                } else if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    showError('Network error. Please check your connection.');
+                } else {
+                    showError('Failed to analyze sentence.');
+                }
+            }
+        }
+        
+        // Check if word is already in vocabulary
+        async function checkWordInVocabulary(word) {
+            try {
+                const response = await fetch(`/api/vocabulary/check/${encodeURIComponent(word)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.exists;
+                }
+            } catch (error) {
+                console.error('[Check Vocabulary] Error:', error);
+            }
+            return false;
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed top-6 left-1/2 -translate-x-1/2 bg-gray-900/90 text-white px-5 py-2.5 rounded-full shadow-lg text-sm font-sans z-50 backdrop-blur-sm transition-all duration-300';
+            toast.textContent = message;
+            toast.style.opacity = '0';
+            toast.style.transform = 'translate(-50%, -10px)';
+            document.body.appendChild(toast);
+            requestAnimationFrame(function() {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translate(-50%, 0)';
+            });
+            setTimeout(function() {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translate(-50%, -10px)';
+                setTimeout(function() {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 2000);
+        }
+        
+        // Initialize word selection with mouseup
+        function initWordSelection() {
+            document.addEventListener('mouseup', function(event) {
+                const isTextElement = event.target.closest('article') ||
+                                     event.target.closest('#readingContent') ||
+                                     event.target.tagName === 'P' ||
+                                     event.target.tagName === 'SPAN' ||
+                                     event.target.tagName === 'DIV';
+                if (!isTextElement) return;
+                if (isProcessingSelection) return;
+                setTimeout(function() { handleSelection(); }, 50);
+            });
+            
+            document.addEventListener('mousedown', function(event) {
+                if (!event.target.closest('article') && !event.target.closest('#readingContent')) {
+                    clearAllHighlights();
+                }
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initWordSelection();
+            initLexileSlider();
+            initPanelScrollAutoHide();
+            updatePanelToggleBtn();
+
+            // TOC refresh button click
+            var tocRefreshBtn = document.getElementById('tocRefreshBtn');
+            if (tocRefreshBtn) {
+                tocRefreshBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    refreshTOC();
+                });
+            }
+
+            const bookId = getBookId();
+            if (bookId) {
+                loadBookContent(bookId);
+            } else {
+                const contentEl = getElement('readingContent');
+                if (contentEl) {
+                    contentEl.innerHTML = `
+                        <div class="text-center text-gray-400 py-20">
+                            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <p>No book selected</p>
+                            <p class="text-sm mt-2">Please select a book from your library</p>
+                        </div>
+                    `;
+                }
+            }
+        });
+    </script>
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/sidebar.js"></script>
+</body>
+</html>

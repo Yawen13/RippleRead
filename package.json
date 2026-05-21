@@ -7,8 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "build:css": "tailwindcss -i src/tailwind.css -o tailwind.css --minify",
-    "watch:css": "tailwindcss -i src/tailwind.css -o tailwind.css --watch",
+    "build:css": "tailwindcss -i styles/tailwind.src.css -o static/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -i styles/tailwind.src.css -o static/css/tailwind.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

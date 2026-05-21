@@ -11,8 +11,11 @@ venv/
 env/
 
 node_modules/
-static/
 frontend/node_modules/
+
+config.yml
+rippleread.db
+*.tar.gz
 
 .DS_Store
 Thumbs.db

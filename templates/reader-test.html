@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reader Test</title>
+</head>
+<body class="p-8">
+    <h1 id="title">Loading...</h1>
+    <p id="author">Loading...</p>
+    <p id="content">Loading...</p>
+    <div id="debug"></div>
+
+    <script>
+        console.log('Script loaded');
+        
+        function getBookId() {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get('id');
+            console.log('Book ID:', id);
+            document.getElementById('debug').innerHTML = 'Book ID from URL: ' + id;
+            return id;
+        }
+
+        async function loadBook(bookId) {
+            console.log('Loading book:', bookId);
+            
+            try {
+                const response = await fetch('http://localhost:9000/api/read/' + bookId);
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error('HTTP error');
+                }
+                
+                const book = await response.json();
+                console.log('Book data:', book);
+                
+                document.getElementById('title').textContent = book.title;
+                document.getElementById('author').textContent = 'Author: ' + (book.author || 'Unknown');
+                document.getElementById('content').textContent = book.content || 'No content';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('content').textContent = 'Error: ' + error.message;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            const bookId = getBookId();
+            if (bookId) {
+                loadBook(bookId);
+            } else {
+                document.getElementById('title').textContent = 'No book ID provided';
+            }
+        });
+    </script>
+    <script src="/static/js/auth.js"></script>
+</body>
+</html>

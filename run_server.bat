@@ -1,4 +1,4 @@
 @echo off
 cd /d e:\RippleRead\RippleRead
-python start_server.py
+python app\start_server.py
 pause

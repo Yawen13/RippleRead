@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.db
+.env
+config.json
+.git/
+.gitignore
+*.md
+docs/
+node_modules/
+.benchmarks/
+*.bat
+venv/
+.venv/

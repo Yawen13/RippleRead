@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API</title>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-4">API 测试页面</h1>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+            <h2 class="text-lg font-semibold mb-2">测试 1: /api/library/recent</h2>
+            <button onclick="testRecent()" class="bg-blue-500 text-white px-4 py-2 rounded">测试</button>
+            <pre id="result1" class="mt-2 bg-gray-100 p-2 rounded text-sm overflow-auto max-h-40"></pre>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+            <h2 class="text-lg font-semibold mb-2">测试 2: /api/library</h2>
+            <button onclick="testLibrary()" class="bg-blue-500 text-white px-4 py-2 rounded">测试</button>
+            <pre id="result2" class="mt-2 bg-gray-100 p-2 rounded text-sm overflow-auto max-h-40"></pre>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6 mb-4">
+            <h2 class="text-lg font-semibold mb-2">测试 3: /api/library/saved</h2>
+            <button onclick="testSaved()" class="bg-blue-500 text-white px-4 py-2 rounded">测试</button>
+            <pre id="result3" class="mt-2 bg-gray-100 p-2 rounded text-sm overflow-auto max-h-40"></pre>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-lg font-semibold mb-2">测试 4: /api/fetch-news</h2>
+            <button onclick="testFetchNews()" class="bg-blue-500 text-white px-4 py-2 rounded">测试</button>
+            <pre id="result4" class="mt-2 bg-gray-100 p-2 rounded text-sm overflow-auto max-h-40"></pre>
+        </div>
+    </div>
+    
+    <script>
+        async function testRecent() {
+            const result = document.getElementById('result1');
+            result.textContent = '加载中...';
+            try {
+                const response = await fetch('/api/library/recent');
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = '错误: ' + error.message;
+            }
+        }
+        
+        async function testLibrary() {
+            const result = document.getElementById('result2');
+            result.textContent = '加载中...';
+            try {
+                const response = await fetch('/api/library');
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2).substring(0, 1000) + '...';
+            } catch (error) {
+                result.textContent = '错误: ' + error.message;
+            }
+        }
+        
+        async function testSaved() {
+            const result = document.getElementById('result3');
+            result.textContent = '加载中...';
+            try {
+                const response = await fetch('/api/library/saved');
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = '错误: ' + error.message;
+            }
+        }
+        
+        async function testFetchNews() {
+            const result = document.getElementById('result4');
+            result.textContent = '加载中...';
+            try {
+                const response = await fetch('/api/fetch-news', { method: 'POST' });
+                const data = await response.json();
+                result.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.textContent = '错误: ' + error.message;
+            }
+        }
+    </script>
+    <script src="/static/js/auth.js"></script>
+</body>
+</html>

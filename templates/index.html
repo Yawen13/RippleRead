@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="color-scheme" content="light dark">
+    <title>RippleRead - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/tailwind.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+    <link rel="stylesheet" href="/static/css/home.css?v=7">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+Pro:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
+    <style>
+
+        :root {
+            --bg-cream: #FCFBF9;
+            --text-primary: #1E293B;
+            --text-secondary: #64748B;
+            --card-bg: #FFFFFF;
+            --accent-teal: #14B8A6;
+            --accent-cyan: #06B6D4;
+            --reader-font-size: 18px;
+            --reader-line-height: 1.6;
+        }
+
+        body {
+            font-family: 'Source Serif Pro', Georgia, serif;
+            background-color: var(--bg-cream);
+            color: var(--text-primary);
+        }
+
+        .font-sans {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .font-serif {
+            font-family: 'Source Serif Pro', Georgia, serif;
+        }
+
+        .nav-link {
+            transition: all 0.25s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.08);
+            color: var(--accent-blue);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-blue);
+        }
+
+        .book-card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .book-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px -4px rgba(0, 0, 0, 0.08);
+        }
+
+        .ai-search-icon {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 8px;
+            height: 8px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+
+        /* News Card Styles */
+        .news-card {
+            transition: all 0.3s ease;
+        }
+
+        .news-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+
+        .toast.error {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+        }
+
+        /* Fetch Button Glow */
+        .fetch-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .fetch-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .fetch-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Loading Spinner */
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+
+        /* ── Continue Reading Capsule (Apple Music‑style) ── */
+        .home-capsule-section {
+            margin-bottom: 32px;
+        }
+
+        .home-capsule {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            height: 88px;
+            padding: 0 12px 0 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.02),
+                0 4px 20px rgba(0, 0, 0, 0.05),
+                0 0 0 1px rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+            transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .home-capsule:hover {
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.03),
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(13, 148, 136, 0.06);
+        }
+
+        .home-capsule--empty {
+            justify-content: center;
+            cursor: default;
+        }
+
+        .home-capsule--empty:hover {
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.02),
+                0 4px 20px rgba(0, 0, 0, 0.05),
+                0 0 0 1px rgba(0, 0, 0, 0.03);
+        }
+
+        /* ── Cover thumbnail ──────────────────── */
+        .home-capsule__cover {
+            width: 48px;
+            height: 64px;
+            flex-shrink: 0;
+            border-radius: 6px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.06), rgba(13, 148, 136, 0.02));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .home-capsule__cover-icon {
+            width: 22px;
+            height: 22px;
+            color: #0D9488;
+            opacity: 0.55;
+        }
+
+        /* ── Info column (flex‑shrink guard) ─── */
+        .home-capsule__info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .home-capsule__label {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.6rem;
+            font-weight: 500;
+            color: #B0ADA5;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin: 0;
+        }
+
+        .home-capsule__title {
+            font-family: 'Source Serif Pro', Georgia, serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1E293B;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            letter-spacing: -0.01em;
+            margin: 0;
+            line-height: 1.3;
+            max-width: 100%;
+        }
+
+        .home-capsule__meta {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: #94A3B8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+            max-width: 100%;
+        }
+
+        /* ── Progress bar (subtle, no label) ──── */
+        .home-capsule__progress {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .home-capsule__progress-bar {
+            width: 100%;
+            height: 3px;
+            border-radius: 2px;
+            background: rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .home-capsule__progress-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #14B8A6, #0D9488);
+            transition: width 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* ── Play / Resume pill button ────────── */
+        .home-capsule__play {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            height: 38px;
+            padding: 0 16px;
+            border: none;
+            border-radius: 20px;
+            background: rgba(13, 148, 136, 0.07);
+            color: #0D9488;
+            cursor: pointer;
+            transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .home-capsule__play:hover {
+            background: rgba(13, 148, 136, 0.12);
+            box-shadow: 0 2px 8px rgba(13, 148, 136, 0.12);
+        }
+
+        .home-capsule__play:active {
+            transform: scale(0.97);
+        }
+
+        .home-capsule__play svg {
+            width: 15px;
+            height: 15px;
+            margin-left: 1px;
+            flex-shrink: 0;
+        }
+
+        .home-capsule__play-label {
+            flex-shrink: 0;
+        }
+
+        /* ── Empty state ──────────────────────── */
+        .home-capsule__empty-text {
+            font-family: 'Source Serif Pro', Georgia, serif;
+            font-size: 0.9rem;
+            color: #94A3B8;
+            font-style: italic;
+        }
+
+        /* ── Dark Mode ─────────────────────────── */
+        html.dark .home-capsule {
+            background: rgba(42, 42, 62, 0.7);
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.15),
+                0 4px 20px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+
+        html.dark .home-capsule:hover {
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.2),
+                0 8px 32px rgba(0, 0, 0, 0.35),
+                0 0 0 1px rgba(45, 212, 191, 0.12);
+        }
+
+        html.dark .home-capsule--empty:hover {
+            box-shadow:
+                0 1px 2px rgba(0, 0, 0, 0.15),
+                0 4px 20px rgba(0, 0, 0, 0.25),
+                0 0 0 1px rgba(255, 255, 255, 0.06);
+        }
+
+        html.dark .home-capsule__cover {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.1), rgba(45, 212, 191, 0.04));
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        html.dark .home-capsule__cover-icon {
+            color: #2dd4bf;
+            opacity: 0.7;
+        }
+
+        html.dark .home-capsule__label {
+            color: #777777;
+        }
+
+        html.dark .home-capsule__title {
+            color: #e2e8f0;
+        }
+
+        html.dark .home-capsule__meta {
+            color: #64748b;
+        }
+
+        html.dark .home-capsule__progress-bar {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        html.dark .home-capsule__play {
+            background: rgba(45, 212, 191, 0.1);
+            color: #2dd4bf;
+        }
+
+        html.dark .home-capsule__empty-text {
+            color: #64748b;
+        }
+
+        html.dark .notification-badge {
+            border-color: #2a2a3e;
+        }
+
+        html.dark .glow-effect {
+            box-shadow: 0 0 20px rgba(45, 212, 191, 0.15);
+        }
+
+        html.dark #bookDetailModal .bg-white {
+            background: #2a2a3e;
+        }
+
+        html.dark #bookDetailModal .text-gray-900 {
+            color: #e2e8f0;
+        }
+
+        html.dark #bookDetailModal .text-gray-500,
+        html.dark #bookDetailModal .text-gray-600 {
+            color: #94a3b8;
+        }
+
+        html.dark #bookDetailModal .text-gray-700 {
+            color: #cbd5e1;
+        }
+
+        html.dark #bookDetailModal .hover\:bg-gray-100:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        html.dark #bookDetailModal .border-gray-200 {
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        html.dark #bookDetailModal .hover\:bg-gray-50:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        html.dark #bookDetailModal .bg-sky-50 {
+            background: rgba(45, 212, 191, 0.1);
+        }
+
+        html.dark #bookDetailModal .text-sky-700 {
+            color: #2dd4bf;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div id="globalSidebar" data-page="home"></div>
+
+    <!-- Sidebar overlay for mobile -->
+    <div class="dash-sidebar-overlay" id="dashSidebarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="dash-main">
+        <div class="dash-page">
+            <!-- Welcome + Search + Bell — merged header row -->
+            <div class="dash-header-row">
+                <div class="dash-header-row__left">
+                    <button class="dash-menu-toggle" id="dashMenuToggle" aria-label="Toggle menu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <line x1="3" y1="12" x2="21" y2="12"/>
+                            <line x1="3" y1="18" x2="21" y2="18"/>
+                        </svg>
+                    </button>
+                    <div class="dash-header-row__greeting-wrap">
+                        <h2 class="dash-welcome__greeting">
+                            Welcome back, <span id="home-greeting-name">Joseph</span>
+                        </h2>
+                        <p class="dash-welcome__hint">Every page you read today is a step toward a better tomorrow.</p>
+                    </div>
+                </div>
+                <div class="dash-header-row__right">
+                    <div class="dash-search">
+                        <svg class="dash-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="text" class="dash-search__input" id="globalSearchInput" placeholder="Search books, articles, notes..." autocomplete="off"/>
+                        <span class="dash-search__kbd">⌘K</span>
+                        <div class="search-dropdown" id="searchDropdown" style="display:none;">
+                            <div class="search-dropdown__inner">
+                                <div class="search-dropdown__loading" id="searchLoading" style="display:none;">
+                                    <div class="skeleton-line"></div>
+                                    <div class="skeleton-line skeleton-line--short"></div>
+                                    <div class="skeleton-line skeleton-line--medium"></div>
+                                </div>
+                                <div class="search-dropdown__results" id="searchResults"></div>
+                                <div class="search-dropdown__empty" id="searchEmpty" style="display:none;">
+                                    <svg class="search-dropdown__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <circle cx="11" cy="11" r="8"/>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                                        <line x1="8" y1="11" x2="14" y2="11"/>
+                                    </svg>
+                                    <span>No results found</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="dash-topbar__bell" id="notificationBell" aria-label="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 01-3.46 0"/>
+                        </svg>
+                        <span class="dash-topbar__bell-dot" id="notificationDot" style="display:none;"></span>
+                    </button>
+                    <div class="notification-dropdown" id="notificationDropdown" style="display:none;">
+                        <div class="notification-dropdown__header">
+                            <span class="notification-dropdown__title">Notifications</span>
+                            <button class="notification-dropdown__mark-all" id="markAllReadBtn" style="display:none;">Mark all read</button>
+                        </div>
+                        <div class="notification-dropdown__list" id="notificationList"></div>
+                        <div class="notification-dropdown__loading" id="notificationLoading" style="display:none;">
+                            <div class="skeleton-line"></div>
+                            <div class="skeleton-line skeleton-line--short"></div>
+                            <div class="skeleton-line skeleton-line--medium"></div>
+                        </div>
+                        <div class="notification-dropdown__empty" id="notificationEmpty" style="display:none;">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32">
+                                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+                            </svg>
+                            <span>No notifications yet</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 1: Continue Reading + Today's Goal -->
+            <div class="dash-grid">
+                <!-- Continue Reading -->
+                <div class="dash-card" id="dashContinueCard">
+                    <div id="dashContinueInner"></div>
+                </div>
+                <!-- Today's Goal -->
+                <div class="dash-card goal-card">
+                    <div class="goal-card__header">
+                        <h3 class="goal-card__title">Today's Goal</h3>
+                        <a class="goal-card__more" href="statistics.html">More &gt;</a>
+                    </div>
+                    <div class="goal-card__body">
+                        <div class="goal-ring">
+                            <svg class="goal-ring__svg" viewBox="0 0 36 36">
+                                <circle class="goal-ring__track" cx="18" cy="18" r="15.5"/>
+                                <circle class="goal-ring__fill" id="goalRingFill" cx="18" cy="18" r="15.5"/>
+                            </svg>
+                            <div class="goal-ring__center">
+                                <span class="goal-ring__value" id="goalValue">-</span>
+                                <span class="goal-ring__unit" id="goalUnit">/ min</span>
+                            </div>
+                        </div>
+                        <div class="goal-card__info">
+                            <div class="goal-card__streak" id="dashStreak"></div>
+                            <p class="goal-card__cta" id="goalCta"></p>
+                            <p class="goal-card__sub" id="goalSub"></p>
+                        </div>
+                    </div>
+                    <div class="goal-chart-row">
+                        <div class="goal-chart" id="goalChart"></div>
+                        <div class="goal-chart__labels" id="goalChartLabels"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Row 2: Recommended For You -->
+            <section class="recs-section">
+                <div class="section-hd">
+                    <h2 class="section-hd__title">Recommended For You</h2>
+                    <a href="book_library.html" class="section-hd__link">View All →</a>
+                </div>
+                <div class="recs-scroll" id="recsScroll"></div>
+            </section>
+
+            <div class="dash-lower-grid">
+                <section class="articles-section dash-panel">
+                    <div class="section-hd">
+                        <h2 class="section-hd__title">Daily Articles</h2>
+                        <a href="news.html" class="section-hd__link" style="background:none;border:none;cursor:pointer;text-decoration:none;">View All</a>
+                    </div>
+                    <div class="articles-grid" id="articlesGrid"></div>
+                </section>
+
+                <section class="stats-section dash-panel">
+                    <div class="section-hd">
+                        <h2 class="section-hd__title">Your Reading Insights</h2>
+                        <button class="insights-filter" type="button">This Week</button>
+                    </div>
+                    <div class="stats-capsule" id="statsCapsule"></div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <!-- Modals and Drawers -->
+    <!-- Book Detail Modal -->
+    <div id="bookDetailModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal('bookDetailModal')"></div>
+        <div class="relative top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden opacity-0 scale-95 transition-all duration-300">
+            <div class="p-8">
+                <button onclick="closeModal('bookDetailModal')" class="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-100 transition-colors">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                <div class="flex gap-8">
+                    <div class="w-48 h-64 rounded-2xl overflow-hidden shadow-xl flex-shrink-0">
+                        <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1053&q=80" alt="Book Cover" class="w-full h-full object-cover">
+                    </div>
+                    <div class="flex-1">
+                        <h2 class="font-serif text-2xl font-bold text-gray-900 mb-2">Deep Work</h2>
+                        <p class="text-gray-500 mb-4">Cal Newport</p>
+                        <div class="flex items-center gap-4 mb-6">
+                            <span class="px-3 py-1 bg-sky-50 text-sky-700 text-sm font-medium rounded-full">Business</span>
+                            <span class="px-3 py-1 bg-sky-50 text-sky-700 text-sm font-medium rounded-full">Productivity</span>
+                        </div>
+                        <p class="text-gray-600 mb-6">Rules for Focused Success in a Distracted World. Learn how to master hard things quickly and produce at an elite level in terms of both quality and speed.</p>
+                        <div class="flex items-center gap-3">
+                            <button class="px-6 py-2.5 bg-sky-500 text-white text-sm font-medium rounded-xl hover:bg-sky-600 transition-colors">
+                                Start Reading
+                            </button>
+                            <button class="px-6 py-2.5 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-50 transition-colors">
+                                Add to Library
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* Dashboard rendering is handled by home.js via /api/home/dashboard */
+    </script>
+    <script src="/static/js/auth.js"></script>
+    <script src="/static/js/sidebar.js?v=2"></script>
+    <script src="/static/js/home.js?v=12"></script>
+</body>
+</html>
